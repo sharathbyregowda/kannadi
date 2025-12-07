@@ -601,7 +601,7 @@ const CategoryManager: React.FC = () => {
             </div>
 
             <div className="category-list">
-                {renderCategorySection(activeTab, '')}
+                {renderCategorySection(activeTab)}
             </div>
         </div>
     );
