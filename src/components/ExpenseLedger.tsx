@@ -156,7 +156,7 @@ const ExpenseLedger: React.FC = () => {
                     <thead>
                         <tr>
                             <th style={{ width: '130px' }}>Date</th>
-                            <th style={{ width: '200px' }}>Category</th>
+                            <th style={{ width: '35%' }}>Category</th>
                             <th>Description</th>
                             <th style={{ width: '120px' }}>Amount</th>
                             <th style={{ width: '80px' }}>Actions</th>

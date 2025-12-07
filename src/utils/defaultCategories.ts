@@ -24,4 +24,10 @@ export const DEFAULT_CATEGORIES: CustomCategory[] = [
     { id: 'cat-15', name: 'Investments', type: ExpenseCategory.SAVINGS, icon: '📈', color: '#10B981' },
     { id: 'cat-16', name: 'Retirement', type: ExpenseCategory.SAVINGS, icon: '🏖️', color: '#10B981' },
     { id: 'cat-17', name: 'Savings Account', type: ExpenseCategory.SAVINGS, icon: '💰', color: '#10B981' },
+
+    // Income
+    { id: 'cat-income-1', name: 'Husband Salary', type: ExpenseCategory.INCOME, icon: '👨‍💼', color: '#10B981' },
+    { id: 'cat-income-2', name: 'Wife Salary', type: ExpenseCategory.INCOME, icon: '👩‍💼', color: '#10B981' },
+    { id: 'cat-income-3', name: 'Dividends', type: ExpenseCategory.INCOME, icon: '📈', color: '#10B981' },
+    { id: 'cat-income-4', name: 'Bank Interest', type: ExpenseCategory.INCOME, icon: '🏦', color: '#10B981' },
 ];

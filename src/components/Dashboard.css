@@ -36,7 +36,7 @@
 
 /* Income Form */
 .income-form-card {
-    grid-column: span 6;
+    grid-column: span 12;
 }
 
 .income-list {
@@ -362,7 +362,7 @@
 
 /* Settings */
 .settings-card {
-    grid-column: span 6;
+    grid-column: span 12;
 }
 
 .settings-summary {

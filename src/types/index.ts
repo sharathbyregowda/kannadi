@@ -2,6 +2,7 @@ export const ExpenseCategory = {
   NEEDS: 'needs',
   WANTS: 'wants',
   SAVINGS: 'savings',
+  INCOME: 'income',
 } as const;
 
 export type ExpenseCategory = typeof ExpenseCategory[keyof typeof ExpenseCategory];
@@ -77,6 +78,7 @@ export interface FinancialData {
   customCategories: CustomCategory[];
   currentMonth: string; // Format: YYYY-MM
   currency: string; // Currency code (USD, EUR, GBP, INR, etc.)
+  version?: number; // Data schema version for migrations
 }
 
 export interface CategoryHierarchy {

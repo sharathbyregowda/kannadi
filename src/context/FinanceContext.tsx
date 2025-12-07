@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 import type {
     FinancialData,
@@ -8,6 +9,7 @@ import type {
     MonthlyData,
     CategoryHierarchy,
 } from '../types';
+import { ExpenseCategory } from '../types';
 import { saveFinancialData, loadFinancialData } from '../utils/localStorage';
 import { calculateBudgetSummary, calculateMonthlyTrends, getCurrentMonth } from '../utils/calculations';
 import { DEFAULT_CATEGORIES } from '../utils/defaultCategories';
@@ -56,15 +58,55 @@ interface FinanceProviderProps {
     children: ReactNode;
 }
 
+const CURRENT_DATA_VERSION = 1;
+
 export const FinanceProvider: React.FC<FinanceProviderProps> = ({ children }) => {
     const [data, setData] = useState<FinancialData>(() => {
         const savedData = loadFinancialData();
-        return savedData || {
+
+        if (savedData) {
+            // Check for migration needs
+            let migratedData = { ...savedData };
+            let hasChanges = false;
+
+            // Migration 1: Ensure all categories have a type and defaults exist
+            if (!migratedData.version || migratedData.version < 1) {
+                console.log('Migrating data to version 1...');
+
+                // 1. Ensure all categories have a valid type (fallback to NEEDS)
+                migratedData.customCategories = migratedData.customCategories.map(cat => ({
+                    ...cat,
+                    type: cat.type || ExpenseCategory.NEEDS
+                }));
+
+                // 2. Merge missing default categories (e.g. new Income categories)
+                const existingIds = new Set(migratedData.customCategories.map((c) => c.id));
+                const missingDefaults = DEFAULT_CATEGORIES.filter((dc) => !existingIds.has(dc.id));
+
+                if (missingDefaults.length > 0) {
+                    migratedData.customCategories = [...migratedData.customCategories, ...missingDefaults];
+                }
+
+                migratedData.version = 1;
+                hasChanges = true;
+            }
+
+            if (hasChanges) {
+                saveFinancialData(migratedData);
+                return migratedData;
+            }
+
+            return savedData;
+        }
+
+        // Initial empty state
+        return {
             incomes: [],
             expenses: [],
             customCategories: DEFAULT_CATEGORIES,
             currentMonth: getCurrentMonth(),
-            currency: 'USD', // Default currency
+            currency: 'USD',
+            version: CURRENT_DATA_VERSION,
         };
     });
 

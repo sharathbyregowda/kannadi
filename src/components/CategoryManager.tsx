@@ -32,7 +32,7 @@ const CategoryManager: React.FC = () => {
             name,
             type,
             icon,
-            color: type === ExpenseCategory.NEEDS ? '#F59E0B' : '#A855F7',
+            color: type === ExpenseCategory.NEEDS ? '#F59E0B' : type === ExpenseCategory.WANTS ? '#A855F7' : '#10B981',
         });
 
         setName('');
@@ -176,6 +176,14 @@ const CategoryManager: React.FC = () => {
             { name: 'Stocks', icon: '📊' },
             { name: 'Bonds', icon: '💼' },
             { name: 'Crypto', icon: '₿' },
+        ],
+        [ExpenseCategory.INCOME]: [
+            { name: 'Salary', icon: '💰' },
+            { name: 'Bonus', icon: '🎁' },
+            { name: 'Freelance', icon: '💻' },
+            { name: 'Investment', icon: '📈' },
+            { name: 'Gift', icon: '🎁' },
+            { name: 'Refund', icon: '↩️' },
         ],
     };
 
@@ -520,9 +528,10 @@ const CategoryManager: React.FC = () => {
                         >
                             <option value={ExpenseCategory.NEEDS}>Need (Essential)</option>
                             <option value={ExpenseCategory.WANTS}>Want (Discretionary)</option>
+                            <option value={ExpenseCategory.INCOME}>Income Source</option>
                         </select>
                         <p className="text-muted" style={{ fontSize: '0.75rem', marginTop: 'var(--spacing-xs)' }}>
-                            Choose whether this expense is essential (Need) or discretionary (Want)
+                            Choose the category type
                         </p>
                     </div>
 
@@ -554,6 +563,7 @@ const CategoryManager: React.FC = () => {
             )}
 
             <div className="category-list">
+                {renderCategorySection(ExpenseCategory.INCOME, 'Income Sources')}
                 {renderCategorySection(ExpenseCategory.NEEDS, 'Needs (50%)')}
                 {renderCategorySection(ExpenseCategory.WANTS, 'Wants (30%)')}
                 {renderCategorySection(ExpenseCategory.SAVINGS, 'Savings (20%)')}

@@ -101,14 +101,21 @@ const IncomeForm: React.FC = () => {
 
                     <div className="form-group">
                         <label className="label">Source</label>
-                        <input
-                            type="text"
-                            className="input"
-                            placeholder="e.g., Salary, Freelance"
+                        <select
+                            className="select"
                             value={source}
                             onChange={(e) => setSource(e.target.value)}
                             required
-                        />
+                        >
+                            <option value="">Select Source</option>
+                            {data.customCategories
+                                .filter((cat) => cat.type === 'income')
+                                .map((cat) => (
+                                    <option key={cat.id} value={cat.name}>
+                                        {cat.icon} {cat.name}
+                                    </option>
+                                ))}
+                        </select>
                     </div>
 
                     <div className="form-group">
