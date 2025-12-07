@@ -1,7 +1,7 @@
 import React from 'react';
 import { useFinance } from '../context/FinanceContext';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
-import { TrendingUp, TrendingDown, AlertCircle } from 'lucide-react';
+
 import { formatCurrency } from '../utils/calculations';
 import './Dashboard.css';
 
