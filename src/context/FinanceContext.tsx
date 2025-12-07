@@ -58,7 +58,7 @@ interface FinanceProviderProps {
     children: ReactNode;
 }
 
-const CURRENT_DATA_VERSION = 3;
+const CURRENT_DATA_VERSION = 4;
 
 export const FinanceProvider: React.FC<FinanceProviderProps> = ({ children }) => {
     const [data, setData] = useState<FinancialData>(() => {
@@ -108,9 +108,15 @@ export const FinanceProvider: React.FC<FinanceProviderProps> = ({ children }) =>
             // Migration 3: Add Pets Category
             if (migratedData.version < 3) {
                 console.log('Migrating data to version 3 (Pets)...');
-                // The "missing defaults" logic below will handle adding the new categories
-                // We just need to bump the version here
                 migratedData.version = 3;
+                hasChanges = true;
+            }
+
+            // Migration 4: OOTB Expansion (Holiday, Subscriptions, Eating Out, Housing)
+            if (migratedData.version < 4) {
+                console.log('Migrating data to version 4 (OOTB Expansion)...');
+                // The "missing defaults" logic below will handle adding the new categories
+                migratedData.version = 4;
                 hasChanges = true;
             }
 

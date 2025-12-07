@@ -124,21 +124,28 @@ const CategoryManager: React.FC = () => {
     // Predefined subcategory options by category type
     const subcategoryOptions = {
         [ExpenseCategory.NEEDS]: [
+            // Housing
+            { name: 'Mortgage', icon: '🏠' },
+            { name: 'Household maintenance', icon: '🔧' },
+            // Utilities
             { name: 'Council Tax', icon: '🏛️' },
             { name: 'Water Bill', icon: '💧' },
             { name: 'Electricity & Gas', icon: '⚡' },
             { name: 'Broadband', icon: '🌐' },
             { name: 'Mobile Phone', icon: '📱' },
             { name: 'TV Licence', icon: '📺' },
+            // Groceries
             { name: 'High Street Supermarkets', icon: '🛒' },
             { name: 'Costco', icon: '🏬' },
             { name: 'Market/Bakery', icon: '🥖' },
+            // Transport
             { name: 'Petrol/Diesel', icon: '⛽' },
             { name: 'Public Transport', icon: '🚌' },
             { name: 'Car Insurance', icon: '🛡️' },
             { name: 'Road Tax', icon: '🧾' },
             { name: 'MOT', icon: '🔧' },
             { name: 'Car Service', icon: '⚙️' },
+            // Education/Kids
             { name: 'School Fee', icon: '📝' },
             { name: 'School Uniform', icon: '👕' },
             { name: 'Stationery', icon: '📋' },
@@ -155,8 +162,27 @@ const CategoryManager: React.FC = () => {
             { name: 'Treats', icon: '🍪' },
         ],
         [ExpenseCategory.WANTS]: [
-            { name: 'Eating Out / Takeaway', icon: '🥡' },
-            { name: 'Holiday', icon: '✈️' },
+            // Eating Out
+            { name: 'Eating out', icon: '🍽️' },
+            { name: 'Drinks/Coffee/Tea', icon: '☕' },
+            { name: 'Takeaways', icon: '🥡' },
+            { name: 'Day outs', icon: '🎢' },
+            // Holiday
+            { name: 'Airfare', icon: '✈️' },
+            { name: 'Hotels', icon: '🏨' },
+            { name: 'Food', icon: '🍽️' },
+            { name: 'Transportation', icon: '🚕' },
+            { name: 'ATM Withdrawals', icon: '🏧' },
+            { name: 'Shopping', icon: '🛍️' },
+            { name: 'Pet Care', icon: '🐾' },
+            { name: 'Sights', icon: '📸' },
+            { name: 'Airport Parking', icon: '🅿️' },
+            // Subscriptions
+            { name: 'Netflix', icon: '📺' },
+            { name: 'Amazon', icon: '📦' },
+            { name: 'VPN', icon: '🔒' },
+            { name: 'Spotify', icon: '🎧' },
+            // Other Wants
             { name: 'Streaming Services', icon: '📺' },
             { name: 'Movies', icon: '🎬' },
             { name: 'Concerts', icon: '🎵' },

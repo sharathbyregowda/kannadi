@@ -65,4 +65,31 @@ export const DEFAULT_CATEGORIES: CustomCategory[] = [
     { id: 'sub-pets-3', name: 'Grooming', type: ExpenseCategory.NEEDS, icon: '✂️', parentId: 'cat-18', isSubcategory: true },
     { id: 'sub-pets-4', name: 'Supplies', type: ExpenseCategory.NEEDS, icon: '💩', parentId: 'cat-18', isSubcategory: true },
     { id: 'sub-pets-5', name: 'Treats', type: ExpenseCategory.NEEDS, icon: '🍪', parentId: 'cat-18', isSubcategory: true },
+
+    // Housing / Rent (New OOTB)
+    { id: 'sub-house-1', name: 'Mortgage', type: ExpenseCategory.NEEDS, icon: '🏠', parentId: 'cat-1', isSubcategory: true },
+    { id: 'sub-house-2', name: 'Household maintenance', type: ExpenseCategory.NEEDS, icon: '🔧', parentId: 'cat-1', isSubcategory: true },
+
+    // Eating Out / Takeaway (New OOTB)
+    { id: 'sub-eat-1', name: 'Eating out', type: ExpenseCategory.WANTS, icon: '🍽️', parentId: 'cat-8', isSubcategory: true },
+    { id: 'sub-eat-2', name: 'Drinks/Coffee/Tea', type: ExpenseCategory.WANTS, icon: '☕', parentId: 'cat-8', isSubcategory: true },
+    { id: 'sub-eat-3', name: 'Takeaways', type: ExpenseCategory.WANTS, icon: '🥡', parentId: 'cat-8', isSubcategory: true },
+    { id: 'sub-eat-4', name: 'Day outs', type: ExpenseCategory.WANTS, icon: '🎢', parentId: 'cat-8', isSubcategory: true },
+
+    // Subscriptions (New OOTB)
+    { id: 'sub-sub-1', name: 'Netflix', type: ExpenseCategory.WANTS, icon: '📺', parentId: 'cat-11', isSubcategory: true },
+    { id: 'sub-sub-2', name: 'Amazon', type: ExpenseCategory.WANTS, icon: '📦', parentId: 'cat-11', isSubcategory: true },
+    { id: 'sub-sub-3', name: 'VPN', type: ExpenseCategory.WANTS, icon: '🔒', parentId: 'cat-11', isSubcategory: true },
+    { id: 'sub-sub-4', name: 'Spotify', type: ExpenseCategory.WANTS, icon: '🎧', parentId: 'cat-11', isSubcategory: true },
+
+    // Holiday (New OOTB)
+    { id: 'sub-hol-1', name: 'Airfare', type: ExpenseCategory.WANTS, icon: '✈️', parentId: 'cat-13', isSubcategory: true },
+    { id: 'sub-hol-2', name: 'Hotels', type: ExpenseCategory.WANTS, icon: '🏨', parentId: 'cat-13', isSubcategory: true },
+    { id: 'sub-hol-3', name: 'Food', type: ExpenseCategory.WANTS, icon: '🍽️', parentId: 'cat-13', isSubcategory: true },
+    { id: 'sub-hol-4', name: 'Transportation', type: ExpenseCategory.WANTS, icon: '🚕', parentId: 'cat-13', isSubcategory: true },
+    { id: 'sub-hol-5', name: 'ATM Withdrawals', type: ExpenseCategory.WANTS, icon: '🏧', parentId: 'cat-13', isSubcategory: true },
+    { id: 'sub-hol-6', name: 'Shopping', type: ExpenseCategory.WANTS, icon: '🛍️', parentId: 'cat-13', isSubcategory: true },
+    { id: 'sub-hol-7', name: 'Pet Care', type: ExpenseCategory.WANTS, icon: '🐾', parentId: 'cat-13', isSubcategory: true },
+    { id: 'sub-hol-8', name: 'Sights', type: ExpenseCategory.WANTS, icon: '📸', parentId: 'cat-13', isSubcategory: true },
+    { id: 'sub-hol-9', name: 'Airport Parking', type: ExpenseCategory.WANTS, icon: '🅿️', parentId: 'cat-13', isSubcategory: true },
 ];
