@@ -58,7 +58,7 @@ interface FinanceProviderProps {
     children: ReactNode;
 }
 
-const CURRENT_DATA_VERSION = 1;
+const CURRENT_DATA_VERSION = 2;
 
 export const FinanceProvider: React.FC<FinanceProviderProps> = ({ children }) => {
     const [data, setData] = useState<FinancialData>(() => {
@@ -79,15 +79,39 @@ export const FinanceProvider: React.FC<FinanceProviderProps> = ({ children }) =>
                     type: cat.type || ExpenseCategory.NEEDS
                 }));
 
-                // 2. Merge missing default categories (e.g. new Income categories)
-                const existingIds = new Set(migratedData.customCategories.map((c) => c.id));
-                const missingDefaults = DEFAULT_CATEGORIES.filter((dc) => !existingIds.has(dc.id));
-
-                if (missingDefaults.length > 0) {
-                    migratedData.customCategories = [...migratedData.customCategories, ...missingDefaults];
-                }
-
                 migratedData.version = 1;
+                hasChanges = true;
+            }
+
+            // Migration 2: UK Context Updates (Renames)
+            if (migratedData.version < 2) {
+                console.log('Migrating data to version 2 (UK Context)...');
+
+                // Rename specific categories
+                const renames: Record<string, { name: string; icon: string }> = {
+                    'cat-8': { name: 'Eating Out / Takeaway', icon: '🥡' }, // Dining Out
+                    'cat-13': { name: 'Holiday', icon: '✈️' }, // Travel
+                    'cat-16': { name: 'Pension', icon: '👴' }, // Retirement
+                };
+
+                migratedData.customCategories = migratedData.customCategories.map(cat => {
+                    if (renames[cat.id]) {
+                        return { ...cat, ...renames[cat.id] };
+                    }
+                    return cat;
+                });
+
+                migratedData.version = 2;
+                hasChanges = true;
+            }
+
+            // Always check for missing defaults (for new subcategories)
+            const existingIds = new Set(migratedData.customCategories.map((c) => c.id));
+            const missingDefaults = DEFAULT_CATEGORIES.filter((dc) => !existingIds.has(dc.id));
+
+            if (missingDefaults.length > 0) {
+                console.log('Adding missing default categories:', missingDefaults.length);
+                migratedData.customCategories = [...migratedData.customCategories, ...missingDefaults];
                 hasChanges = true;
             }
 
