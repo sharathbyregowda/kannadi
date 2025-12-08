@@ -50,12 +50,19 @@ export const calculateBudgetSummary = (
         isYearly ? expense.month.startsWith(year) : expense.month === currentMonth
     );
 
-    const totalIncome = monthIncomes.reduce((sum, income) => sum + income.amount, 0);
-    const totalExpenses = monthExpenses.reduce((sum, expense) => sum + expense.amount, 0);
-    const netSavings = totalIncome - totalExpenses;
 
+    const totalIncome = monthIncomes.reduce((sum, income) => sum + income.amount, 0);
+    // OLD: const totalExpenses = monthExpenses.reduce((sum, expense) => sum + expense.amount, 0);
+    // NEW: We calculate total expenses after getting the breakdown to exclude 'savings' category
     const recommended = calculate50_30_20(totalIncome);
     const actual = calculateActualBreakdown(monthExpenses);
+
+    // Total Expenses = Needs + Wants (Excluding Savings contributions)
+    const totalExpenses = actual.needs + actual.wants;
+
+    // Net Savings = Income - Expenses (Needs + Wants)
+    // This effectively matches: Actual Savings Contributions + Unallocated Cash
+    const netSavings = totalIncome - totalExpenses;
 
     const needsPercentage = totalIncome > 0 ? (actual.needs / totalIncome) * 100 : 0;
     const wantsPercentage = totalIncome > 0 ? (actual.wants / totalIncome) * 100 : 0;
@@ -91,6 +98,7 @@ export const calculateBudgetSummary = (
 
 export const calculateSavingsRate = (totalIncome: number, totalExpenses: number): number => {
     if (totalIncome === 0) return 0;
+    // Net Savings = Total Income - Total Expenses (where Expenses = Needs + Wants)
     return ((totalIncome - totalExpenses) / totalIncome) * 100;
 };
 

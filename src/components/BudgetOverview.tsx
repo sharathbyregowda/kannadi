@@ -85,8 +85,8 @@ const BudgetOverview: React.FC = () => {
                         ></div>
                     </div>
                     <div className="text-xs text-muted flex justify-between">
-                        <span>{formatCurrency(budgetSummary.actualNeeds, data.currency)}</span>
-                        <span>{formatCurrency(budgetSummary.recommendedNeeds, data.currency)}</span>
+                        <span>Actual: {formatCurrency(budgetSummary.actualNeeds, data.currency)}</span>
+                        <span>Target: {formatCurrency(budgetSummary.recommendedNeeds, data.currency)}</span>
                     </div>
                 </div>
 
@@ -111,8 +111,8 @@ const BudgetOverview: React.FC = () => {
                         ></div>
                     </div>
                     <div className="text-xs text-muted flex justify-between">
-                        <span>{formatCurrency(budgetSummary.actualWants, data.currency)}</span>
-                        <span>{formatCurrency(budgetSummary.recommendedWants, data.currency)}</span>
+                        <span>Actual: {formatCurrency(budgetSummary.actualWants, data.currency)}</span>
+                        <span>Target: {formatCurrency(budgetSummary.recommendedWants, data.currency)}</span>
                     </div>
                 </div>
 
@@ -137,8 +137,8 @@ const BudgetOverview: React.FC = () => {
                         ></div>
                     </div>
                     <div className="text-xs text-muted flex justify-between">
-                        <span>{formatCurrency(budgetSummary.actualSavings, data.currency)}</span>
-                        <span>{formatCurrency(budgetSummary.recommendedSavings, data.currency)}</span>
+                        <span>Actual: {formatCurrency(budgetSummary.actualSavings, data.currency)}</span>
+                        <span>Target: {formatCurrency(budgetSummary.recommendedSavings, data.currency)}</span>
                     </div>
                 </div>
             </div>
