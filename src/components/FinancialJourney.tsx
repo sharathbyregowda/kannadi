@@ -137,7 +137,7 @@ const FinancialJourney: React.FC<FinancialJourneyProps> = ({ data, expenses, cat
             </div>
 
             {/* 3-Column Grid - FORCED 3 COLUMNS */}
-            <div className="grid grid-cols-3 gap-6">
+            <div className="grid grid-cols-3 gap-6" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)' }}>
                 <CategoryColumn
                     title="Needs"
                     target={50}
