@@ -69,7 +69,10 @@ const Dashboard: React.FC = () => {
                     <BudgetOverview />
 
                     {/* Financial Journey */}
-                    <FinancialJourney data={calculateMonthlyTrends(data.incomes, data.expenses)} />
+                    {/* Financial Journey - Only shown in Yearly View */}
+                    {data.currentMonth.endsWith('-ALL') && (
+                        <FinancialJourney data={calculateMonthlyTrends(data.incomes, data.expenses)} />
+                    )}
 
                     {/* Income vs Expenses Chart */}
                     <IncomeVsExpenses />

@@ -13,6 +13,7 @@ A modern, privacy-focused personal finance tracker built to help you master the 
 - **🛡️ Privacy First**: Your data lives in your browser (`localStorage`). No servers, no accounts, no tracking.
 - **💾 Backup & Restore**: Export your financial history to JSON and restore it on any device.
 - **📅 Yearly Overview**: Cumulative views to track your progress over the entire year.
+- **🏔️ Financial Journey**: Discover your unique **Financial Persona** based on your yearly spending habits inside the Yearly Overview.
 
 ## 🚀 Tech Stack
 
