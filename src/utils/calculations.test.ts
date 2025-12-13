@@ -84,8 +84,10 @@ describe('calculations', () => {
             const summary = calculateBudgetSummary(incomes, expenses, '2023-01');
 
             expect(summary.totalIncome).toBe(5000);
-            expect(summary.totalExpenses).toBe(3500);
-            expect(summary.netSavings).toBe(1500);
+            // Needs (2000) + Wants (1000) = 3000. Savings (500) excluded.
+            expect(summary.totalExpenses).toBe(3000);
+            // Income (5000) - Expenses (3000) = 2000.
+            expect(summary.netSavings).toBe(2000);
 
             // Check breakdown
             expect(summary.actualNeeds).toBe(2000);

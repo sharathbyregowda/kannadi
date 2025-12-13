@@ -40,10 +40,17 @@ const SavingsSummary: React.FC = () => {
             color: '#A855F7',
             bgColor: 'rgba(168, 85, 247, 0.1)',
         },
+        {
+            title: 'Cash Balance',
+            value: formatCurrency(budgetSummary.unallocatedCash, data.currency),
+            icon: <Wallet size={24} />, // Reusing Wallet icon, or could import another like Coins
+            color: budgetSummary.unallocatedCash >= 0 ? '#10B981' : '#EF4444', // Green if positive, Red if negative
+            bgColor: budgetSummary.unallocatedCash >= 0 ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+        },
     ];
 
     return (
-        <div className="savings-summary-grid">
+        <div className="savings-summary-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
             {cards.map((card, index) => (
                 <div key={index} className="card summary-card" style={{ padding: 'var(--spacing-lg)' }}>
                     <div className="summary-card-header">

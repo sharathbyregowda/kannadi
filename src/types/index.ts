@@ -55,7 +55,7 @@ export interface BudgetSummary {
   needsPercentage: number;
   wantsPercentage: number;
   savingsPercentage: number;
-
+  unallocatedCash: number;
   // Status
   isOverBudget: boolean;
   needsStatus: 'under' | 'over' | 'on-track';

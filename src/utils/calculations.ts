@@ -52,21 +52,26 @@ export const calculateBudgetSummary = (
 
 
     const totalIncome = monthIncomes.reduce((sum, income) => sum + income.amount, 0);
-    // OLD: const totalExpenses = monthExpenses.reduce((sum, expense) => sum + expense.amount, 0);
-    // NEW: We calculate total expenses after getting the breakdown to exclude 'savings' category
     const recommended = calculate50_30_20(totalIncome);
     const actual = calculateActualBreakdown(monthExpenses);
 
     // Total Expenses = Needs + Wants (Excluding Savings contributions)
+    // We exclude 'savings' type expenses from Total Expenses because they are technically
+    // transfers to savings, not money 'spent' in the context of Net Savings capacity.
     const totalExpenses = actual.needs + actual.wants;
 
-    // Net Savings = Income - Expenses (Needs + Wants)
-    // This effectively matches: Actual Savings Contributions + Unallocated Cash
+    // Net Savings (Total Savings Capacity) = Income - Expenses (Needs + Wants)
+    // This represents the total amount available for savings (whether allocated or not)
+    // effectively: Actual Savings Contributions + Unallocated Cash
     const netSavings = totalIncome - totalExpenses;
 
     const needsPercentage = totalIncome > 0 ? (actual.needs / totalIncome) * 100 : 0;
     const wantsPercentage = totalIncome > 0 ? (actual.wants / totalIncome) * 100 : 0;
     const savingsPercentage = totalIncome > 0 ? (actual.savings / totalIncome) * 100 : 0;
+
+    // Unallocated Cash = Net Savings - Actual Savings Contributions
+    // This is the actual cash remaining in the account after all expenses and savings transfers
+    const unallocatedCash = netSavings - actual.savings;
 
     const getStatus = (actual: number, recommended: number): 'under' | 'over' | 'on-track' => {
         const tolerance = 0.05; // 5% tolerance
@@ -89,6 +94,7 @@ export const calculateBudgetSummary = (
         needsPercentage,
         wantsPercentage,
         savingsPercentage,
+        unallocatedCash,
         isOverBudget: totalExpenses > totalIncome,
         needsStatus: getStatus(actual.needs, recommended.needs),
         wantsStatus: getStatus(actual.wants, recommended.wants),
