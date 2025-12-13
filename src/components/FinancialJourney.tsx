@@ -1,6 +1,6 @@
 
 import React, { useMemo } from 'react';
-import { calculateJourneyStats, getFinancialPersona } from '../utils/journey';
+import { getFinancialPersona } from '../utils/journey';
 import { calculateCategoryBreakdown } from '../utils/calculations';
 import type { MonthlyData, Expense, CustomCategory } from '../types';
 
@@ -9,27 +9,63 @@ interface FinancialJourneyProps {
     expenses: Expense[];
     categories: CustomCategory[];
     currentMonth: string;
+    cashBalance: number;
 }
 
-const FinancialJourney: React.FC<FinancialJourneyProps> = ({ data, expenses, categories, currentMonth }) => {
+const FinancialJourney: React.FC<FinancialJourneyProps> = ({ data, expenses, categories, currentMonth, cashBalance }) => {
     // Only show if we have more than 3 months of data (user requirement)
     if (!data || data.length < 3) {
         return null;
     }
 
-    const stats = calculateJourneyStats(data);
-    const persona = getFinancialPersona(stats);
-
-    // Calculate Top 3 for each type
-    const topCategories = useMemo(() => {
+    const { persona, stats } = useMemo(() => {
         const breakdown = calculateCategoryBreakdown(expenses, categories, currentMonth);
 
+        // Calculate Totals for Ratio from the provided expenses
+        const totalIncome = data.reduce((sum, m) => sum + m.income, 0);
+
+        // Provide safe defaults
+        let needsPercent = 0, wantsPercent = 0, savingsPercent = 0;
+        let tNeeds = 0, tWants = 0, tSavings = 0;
+
+        if (totalIncome > 0) {
+            const getSum = (type: string) => breakdown
+                .filter(i => i.categoryType === type)
+                .reduce((s, i) => s + i.total, 0);
+
+            tNeeds = getSum('needs');
+            tWants = getSum('wants');
+            tSavings = getSum('savings');
+
+            needsPercent = (tNeeds / totalIncome) * 100;
+            wantsPercent = (tWants / totalIncome) * 100;
+            savingsPercent = (tSavings / totalIncome) * 100;
+        }
+
+        const calculatedStats = {
+            totalIncome,
+            totalNeeds: tNeeds,
+            totalWants: tWants,
+            totalSavings: tSavings,
+            needsPercentage: needsPercent,
+            wantsPercentage: wantsPercent,
+            savingsPercentage: savingsPercent
+        };
+
+        return {
+            persona: getFinancialPersona(calculatedStats),
+            stats: calculatedStats
+        };
+    }, [data, expenses, categories, currentMonth]);
+
+    const topCategories = useMemo(() => {
+        const breakdown = calculateCategoryBreakdown(expenses, categories, currentMonth);
         const getTop3 = (type: string) => {
             return breakdown
                 .filter(item => item.categoryType === type)
+                .sort((a, b) => b.total - a.total)
                 .slice(0, 3);
         };
-
         return {
             needs: getTop3('needs'),
             wants: getTop3('wants'),
@@ -37,57 +73,55 @@ const FinancialJourney: React.FC<FinancialJourneyProps> = ({ data, expenses, cat
         };
     }, [expenses, categories, currentMonth]);
 
-    const BentoCard = ({ title, value, color, icon, items, subtitle }: { title: string, value: number, color: string, icon: React.ReactNode, items: typeof topCategories.needs, subtitle?: string }) => (
-        <div className="flex flex-col h-full bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
-            {/* Header / Top Section */}
-            <div className="p-5 flex flex-col gap-3 relative overflow-hidden">
-                {/* Background accent */}
-                <div style={{ backgroundColor: color, opacity: 0.1 }} className="absolute inset-0 pointer-events-none" />
+    const ratioString = `${Math.round(stats.needsPercentage)}/${Math.round(stats.wantsPercentage)}/${Math.round(stats.savingsPercentage)}`;
 
-                <div className="flex justify-between items-start z-10">
-                    <div className="flex items-center gap-2">
-                        <div className="p-2 rounded-lg bg-white/50 backdrop-blur-sm dark:bg-black/20 text-xl">
-                            {icon}
-                        </div>
-                        <div>
-                            <h4 className="font-semibold text-lg">{title}</h4>
-                            {subtitle && <p className="text-xs opacity-70">{subtitle}</p>}
-                        </div>
+    // Column Card Component based on Wireframe
+    const CategoryColumn = ({ title, target, current, items, color, bgClass }: { title: string, target: number, current: number, items: typeof topCategories.needs, color: string, bgClass: string }) => (
+        <div className={`flex flex-col h-full rounded-xl overflow-hidden border border-[var(--border-color)] ${bgClass} transition-colors duration-300`}>
+            {/* Header */}
+            <div className="p-4 border-b border-black/5 dark:border-white/5 text-center">
+                <h4 className="font-bold text-lg tracking-wide">{title}</h4>
+            </div>
+
+            {/* Stats: Target vs Current */}
+            <div className="p-6 flex flex-col items-center gap-4">
+                <div className="flex w-full justify-between px-4">
+                    <div className="flex flex-col items-center">
+                        <span className="text-xs uppercase tracking-wider opacity-60 font-semibold mb-1">Target</span>
+                        <span className="text-xl font-medium opacity-80">{target}%</span>
                     </div>
-                    <span className="text-3xl font-bold tracking-tight" style={{ color }}>
-                        {Math.round(value)}%
-                    </span>
+                    <div className="w-px h-10 bg-[var(--border-color)]"></div>
+                    <div className="flex flex-col items-center">
+                        <span className="text-xs uppercase tracking-wider opacity-60 font-semibold mb-1">Current</span>
+                        <span className="text-3xl font-bold" style={{ color }}>{Math.round(current)}%</span>
+                    </div>
                 </div>
 
-                {/* Progress Bar */}
-                <div className="h-2 bg-[var(--bg-secondary)] rounded-full overflow-hidden w-full mt-2 z-10">
+                {/* Progress Bar visual context */}
+                <div className="w-full h-1.5 bg-black/10 dark:bg-white/10 rounded-full overflow-hidden mt-2">
                     <div
-                        className="h-full transition-all duration-1000 ease-out"
-                        style={{ width: `${Math.min(Math.max(value, 0), 100)}%`, backgroundColor: color }}
+                        className="h-full rounded-full transition-all duration-1000"
+                        style={{ width: `${Math.min(current, 100)}%`, backgroundColor: color }}
                     />
                 </div>
             </div>
 
-            {/* Content / List Section */}
-            <div className="p-5 pt-2 flex-grow flex flex-col">
-                <div className="mt-2 space-y-3">
-                    <p className="text-xs uppercase tracking-wider opacity-50 font-semibold mb-3">Top Contributors</p>
+            {/* Top Contributors List */}
+            <div className="p-5 pt-0 flex-grow">
+                <p className="text-xs text-center uppercase tracking-wider opacity-50 font-semibold mb-4">Top Contributors</p>
+                <div className="space-y-3">
                     {items.length > 0 ? (
                         items.map(item => (
-                            <div key={item.categoryId} className="flex justify-between items-center text-sm group">
-                                <div className="flex items-center gap-2 overflow-hidden">
-                                    <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: color }}></span>
-                                    <span className="truncate opacity-80 group-hover:opacity-100 transition-opacity">
-                                        {item.categoryName}
-                                    </span>
-                                </div>
-                                <span className="font-mono font-medium opacity-70 group-hover:opacity-100 transition-opacity">
-                                    {Math.round(item.percentage)}%
+                            <div key={item.categoryId} className="flex justify-between items-center text-sm">
+                                <span className="flex items-center gap-2 truncate opacity-90">
+                                    <span className="opacity-70">{item.categoryIcon}</span>
+                                    <span>{item.categoryName}</span>
                                 </span>
+                                <span className="font-mono font-medium opacity-75">{Math.round(item.percentage)}%</span>
                             </div>
                         ))
                     ) : (
-                        <div className="text-sm opacity-50 italic py-2">No expenses yet</div>
+                        <div className="text-sm opacity-40 text-center italic py-4">No data</div>
                     )}
                 </div>
             </div>
@@ -97,76 +131,62 @@ const FinancialJourney: React.FC<FinancialJourneyProps> = ({ data, expenses, cat
     return (
         <div className="card financial-journey-card mt-8 p-0 border-none shadow-none bg-transparent">
             {/* Header Section */}
-            <div className="mb-6">
-                <h3 className="text-2xl font-bold flex items-center gap-2 mb-2">
+            <div className="mb-8 pl-1">
+                <h3 className="text-2xl font-bold flex items-center gap-2 mb-1">
                     <span>🏔️</span> Your Financial Journey
                 </h3>
-                <p className="text-muted">
-                    Based on your activity over the last {data.length} months.
-                    Monitor your 50/30/20 balance.
+                <p className="text-muted text-sm">
+                    Based on your activity. Current Balance: <span className="font-mono font-semibold text-[var(--text-primary)]">{ratioString}</span> (Needs/Wants/Savings).
                 </p>
+
+                {/* Persona & Recommendation */}
+                <div className="mt-4 flex flex-col gap-2">
+                    {/* Inline Icon & Title */}
+                    <div className="flex items-center gap-2">
+                        <span className="text-2xl">{persona.icon}</span>
+                        <h4 className="font-bold text-lg" style={{ color: persona.color }}>{persona.title}</h4>
+                    </div>
+
+                    <p className="text-sm opacity-90 max-w-2xl leading-relaxed">
+                        {persona.description}
+                    </p>
+
+                    {/* Conditional Recommendation */}
+                    {cashBalance > 100 && (
+                        <div className="flex items-start gap-2 mt-1 text-xs opacity-80 max-w-xl">
+                            <span className="shrink-0 mt-0.5">💡</span>
+                            <span className="italic">{persona.recommendation} Consider investing your surplus cash for long-term growth.</span>
+                        </div>
+                    )}
+                </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-                {/* Persona Section - Full Width or Large */}
-                <div className="md:col-span-12 p-6 rounded-2xl bg-gradient-to-br from-[var(--bg-secondary)] to-[var(--bg-primary)] border border-[var(--border-color)] relative overflow-hidden group">
-                    {/* Decorative glow */}
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-current opacity-5 blur-3xl rounded-full translate-x-1/3 -translate-y-1/3" style={{ color: persona.color }} />
-
-                    <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center gap-6">
-                        <div className="w-16 h-16 flex items-center justify-center rounded-2xl text-4xl bg-white dark:bg-black/20 shadow-sm border border-[var(--border-color)]">
-                            {persona.icon}
-                        </div>
-                        <div className="flex-grow">
-                            <h4 className="font-bold text-2xl mb-1" style={{ color: persona.color }}>
-                                {persona.title}
-                            </h4>
-                            <p className="text-base opacity-90 leading-relaxed max-w-2xl">
-                                {persona.description}
-                            </p>
-                        </div>
-                        <div className="md:w-1/3 bg-white/50 dark:bg-black/20 p-4 rounded-xl border border-[var(--border-color)/50] backdrop-blur-sm self-stretch flex items-start">
-                            <div className="flex gap-3">
-                                <span className="text-lg">💡</span>
-                                <p className="text-sm italic opacity-80 leading-snug">
-                                    {persona.recommendation}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Stats Cards - Bento Grid Row */}
-                <div className="md:col-span-4">
-                    <BentoCard
-                        title="Needs"
-                        subtitle="Target: 50%"
-                        value={stats.needsPercentage}
-                        color="#F59E0B"
-                        icon={<span>🏠</span>}
-                        items={topCategories.needs}
-                    />
-                </div>
-                <div className="md:col-span-4">
-                    <BentoCard
-                        title="Wants"
-                        subtitle="Target: 30%"
-                        value={stats.wantsPercentage}
-                        color="#A855F7"
-                        icon={<span>🎮</span>}
-                        items={topCategories.wants}
-                    />
-                </div>
-                <div className="md:col-span-4">
-                    <BentoCard
-                        title="Savings"
-                        subtitle="Target: 20%"
-                        value={stats.savingsPercentage}
-                        color="#10B981"
-                        icon={<span>🌱</span>}
-                        items={topCategories.savings}
-                    />
-                </div>
+            {/* 3-Column Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <CategoryColumn
+                    title="Needs"
+                    target={50}
+                    current={stats.needsPercentage}
+                    items={topCategories.needs}
+                    color="#0ea5e9" // Sky blue 
+                    bgClass="bg-sky-50/50 dark:bg-sky-900/10"
+                />
+                <CategoryColumn
+                    title="Wants"
+                    target={30}
+                    current={stats.wantsPercentage}
+                    items={topCategories.wants}
+                    color="#8b5cf6" // Violet
+                    bgClass="bg-violet-50/50 dark:bg-violet-900/10"
+                />
+                <CategoryColumn
+                    title="Savings"
+                    target={20}
+                    current={stats.savingsPercentage}
+                    items={topCategories.savings}
+                    color="#10b981" // Emerald
+                    bgClass="bg-emerald-50/50 dark:bg-emerald-900/10"
+                />
             </div>
         </div>
     );

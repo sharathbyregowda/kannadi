@@ -13,7 +13,7 @@ import Settings from './Settings';
 import './Dashboard.css';
 
 const Dashboard: React.FC = () => {
-    const { data, setCurrentMonth } = useFinance();
+    const { data, budgetSummary, setCurrentMonth } = useFinance();
 
     return (
         <div className="dashboard">
@@ -75,6 +75,7 @@ const Dashboard: React.FC = () => {
                             expenses={data.expenses}
                             categories={data.customCategories}
                             currentMonth={data.currentMonth}
+                            cashBalance={budgetSummary.unallocatedCash}
                         />
                     )}
 
