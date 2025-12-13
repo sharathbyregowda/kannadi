@@ -2,61 +2,35 @@
 import React, { useMemo } from 'react';
 import { getFinancialPersona } from '../utils/journey';
 import { calculateCategoryBreakdown } from '../utils/calculations';
-import type { MonthlyData, Expense, CustomCategory } from '../types';
+import type { MonthlyData, Expense, CustomCategory, BudgetSummary } from '../types';
 
 interface FinancialJourneyProps {
     data: MonthlyData[];
     expenses: Expense[];
     categories: CustomCategory[];
     currentMonth: string;
+    budgetSummary: BudgetSummary;
     cashBalance: number;
 }
 
-const FinancialJourney: React.FC<FinancialJourneyProps> = ({ data, expenses, categories, currentMonth, cashBalance }) => {
+const FinancialJourney: React.FC<FinancialJourneyProps> = ({ data, expenses, categories, currentMonth, budgetSummary, cashBalance }) => {
     // Only show if we have more than 3 months of data (user requirement)
     if (!data || data.length < 3) {
         return null;
     }
 
-    const { persona, stats } = useMemo(() => {
-        const breakdown = calculateCategoryBreakdown(expenses, categories, currentMonth);
+    // Use pre-calculated stats from BudgetSummary (Source of Truth for the selected period)
+    const stats = {
+        totalIncome: budgetSummary.totalIncome,
+        totalNeeds: budgetSummary.actualNeeds,
+        totalWants: budgetSummary.actualWants,
+        totalSavings: budgetSummary.actualSavings,
+        needsPercentage: budgetSummary.needsPercentage || 0,
+        wantsPercentage: budgetSummary.wantsPercentage || 0,
+        savingsPercentage: budgetSummary.savingsPercentage || 0
+    };
 
-        // Calculate Totals for Ratio from the provided expenses
-        const totalIncome = data.reduce((sum, m) => sum + m.income, 0);
-
-        // Provide safe defaults
-        let needsPercent = 0, wantsPercent = 0, savingsPercent = 0;
-        let tNeeds = 0, tWants = 0, tSavings = 0;
-
-        if (totalIncome > 0) {
-            const getSum = (type: string) => breakdown
-                .filter(i => i.categoryType === type)
-                .reduce((s, i) => s + i.total, 0);
-
-            tNeeds = getSum('needs');
-            tWants = getSum('wants');
-            tSavings = getSum('savings');
-
-            needsPercent = (tNeeds / totalIncome) * 100;
-            wantsPercent = (tWants / totalIncome) * 100;
-            savingsPercent = (tSavings / totalIncome) * 100;
-        }
-
-        const calculatedStats = {
-            totalIncome,
-            totalNeeds: tNeeds,
-            totalWants: tWants,
-            totalSavings: tSavings,
-            needsPercentage: needsPercent,
-            wantsPercentage: wantsPercent,
-            savingsPercentage: savingsPercent
-        };
-
-        return {
-            persona: getFinancialPersona(calculatedStats),
-            stats: calculatedStats
-        };
-    }, [data, expenses, categories, currentMonth]);
+    const persona = useMemo(() => getFinancialPersona(stats), [stats]);
 
     const topCategories = useMemo(() => {
         const breakdown = calculateCategoryBreakdown(expenses, categories, currentMonth);
@@ -73,7 +47,8 @@ const FinancialJourney: React.FC<FinancialJourneyProps> = ({ data, expenses, cat
         };
     }, [expenses, categories, currentMonth]);
 
-    const ratioString = `${Math.round(stats.needsPercentage)}/${Math.round(stats.wantsPercentage)}/${Math.round(stats.savingsPercentage)}`;
+    const safeRound = (val: number) => isNaN(val) ? 0 : Math.round(val);
+    const ratioString = `${safeRound(stats.needsPercentage)}/${safeRound(stats.wantsPercentage)}/${safeRound(stats.savingsPercentage)}`;
 
     // Column Card Component based on Wireframe
     const CategoryColumn = ({ title, target, current, items, color, bgClass }: { title: string, target: number, current: number, items: typeof topCategories.needs, color: string, bgClass: string }) => (
@@ -85,15 +60,15 @@ const FinancialJourney: React.FC<FinancialJourneyProps> = ({ data, expenses, cat
 
             {/* Stats: Target vs Current */}
             <div className="p-6 flex flex-col items-center gap-4">
-                <div className="flex w-full justify-between px-4">
+                <div className="flex w-full justify-between items-center px-2">
                     <div className="flex flex-col items-center">
                         <span className="text-xs uppercase tracking-wider opacity-60 font-semibold mb-1">Target</span>
                         <span className="text-xl font-medium opacity-80">{target}%</span>
                     </div>
-                    <div className="w-px h-10 bg-[var(--border-color)]"></div>
+                    <div className="w-px h-10 bg-[var(--border-color)] opacity-50"></div>
                     <div className="flex flex-col items-center">
                         <span className="text-xs uppercase tracking-wider opacity-60 font-semibold mb-1">Current</span>
-                        <span className="text-3xl font-bold" style={{ color }}>{Math.round(current)}%</span>
+                        <span className="text-3xl font-bold" style={{ color }}>{safeRound(current)}%</span>
                     </div>
                 </div>
 
@@ -113,11 +88,11 @@ const FinancialJourney: React.FC<FinancialJourneyProps> = ({ data, expenses, cat
                     {items.length > 0 ? (
                         items.map(item => (
                             <div key={item.categoryId} className="flex justify-between items-center text-sm">
-                                <span className="flex items-center gap-2 truncate opacity-90">
-                                    <span className="opacity-70">{item.categoryIcon}</span>
-                                    <span>{item.categoryName}</span>
+                                <span className="flex items-center gap-2 truncate opacity-90 min-w-0">
+                                    <span className="opacity-70 shrink-0">{item.categoryIcon}</span>
+                                    <span className="truncate">{item.categoryName}</span>
                                 </span>
-                                <span className="font-mono font-medium opacity-75">{Math.round(item.percentage)}%</span>
+                                <span className="font-mono font-medium opacity-75 shrink-0">{safeRound(item.percentage)}%</span>
                             </div>
                         ))
                     ) : (
@@ -161,8 +136,8 @@ const FinancialJourney: React.FC<FinancialJourneyProps> = ({ data, expenses, cat
                 </div>
             </div>
 
-            {/* 3-Column Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* 3-Column Grid - FORCED 3 COLUMNS */}
+            <div className="grid grid-cols-3 gap-6">
                 <CategoryColumn
                     title="Needs"
                     target={50}

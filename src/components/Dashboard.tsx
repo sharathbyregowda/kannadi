@@ -75,6 +75,7 @@ const Dashboard: React.FC = () => {
                             expenses={data.expenses}
                             categories={data.customCategories}
                             currentMonth={data.currentMonth}
+                            budgetSummary={budgetSummary}
                             cashBalance={budgetSummary.unallocatedCash}
                         />
                     )}
