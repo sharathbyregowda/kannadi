@@ -9,6 +9,7 @@ import CategoryBreakdown from './CategoryBreakdown';
 import SavingsSummary from './SavingsSummary';
 import MonthlySummary from './MonthlySummary';
 import YearlySummary from './YearlySummary';
+import IfThisContinues from './IfThisContinues';
 import CategoryManager from './CategoryManager';
 import Settings from './Settings';
 import './Dashboard.css';
@@ -67,6 +68,7 @@ const Dashboard: React.FC = () => {
                     <div className="col-span-12 monthly-summary-container">
                         <MonthlySummary />
                         <YearlySummary />
+                        {!data.currentMonth.endsWith('-ALL') && <IfThisContinues />}
                     </div>
 
                     {/* Summary Cards */}
@@ -77,14 +79,19 @@ const Dashboard: React.FC = () => {
 
                     {/* Financial Journey - Only shown in Yearly View */}
                     {data.currentMonth.endsWith('-ALL') && (
-                        <FinancialJourney
-                            data={calculateMonthlyTrends(data.incomes, data.expenses)}
-                            expenses={data.expenses}
-                            categories={data.customCategories}
-                            currentMonth={data.currentMonth}
-                            budgetSummary={budgetSummary}
-                            cashBalance={budgetSummary.unallocatedCash}
-                        />
+                        <>
+                            <FinancialJourney
+                                data={calculateMonthlyTrends(data.incomes, data.expenses)}
+                                expenses={data.expenses}
+                                categories={data.customCategories}
+                                currentMonth={data.currentMonth}
+                                budgetSummary={budgetSummary}
+                                cashBalance={budgetSummary.unallocatedCash}
+                            />
+                            <div className="col-span-12">
+                                <IfThisContinues />
+                            </div>
+                        </>
                     )}
 
                     {/* Category Breakdown */}
