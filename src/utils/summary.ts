@@ -245,6 +245,15 @@ export const generateMonthlySummary = (input: SummaryInput): string[] => {
         }
     }
 
+    // Suppression Rule: "Savings exceeded plan" vs "Savings fell"
+    // If we have a negative savings health message ("fell"), suppress positive savings variance.
+    const savingsHealth = sorted.find(c => c.type === 'savings');
+    if (savingsHealth && savingsHealth.text.includes('fell')) {
+        // Remove only positive savings variance ("exceeded plan")
+        // Negative savings variance ("less than target") is consistent with "fell"
+        sorted = sorted.filter(c => !(c.type === 'variance' && c.group === 'Savings' && c.text.includes('exceeded plan')));
+    }
+
     // "Standalone savings rate" -> We implemented only "Change". 
     // "Suppression order: Standalone savings rate, Savings variance, Wants variance..."
 

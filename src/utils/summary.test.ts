@@ -140,4 +140,37 @@ describe('generateMonthlySummary', () => {
         // Wants (100) -> Drop (Lowest abs variance)
         expect(result.some(r => r.includes('Wants'))).toBe(false);
     });
+
+    it('suppresses savings variance if savings rate fell (Option A)', () => {
+        // Scenario: Savings exceeded plan (positive variance) 
+        // BUT savings rate fell (e.g. income increased much more than savings did)
+        const budgetSummary = {
+            ...mockBudgetSummary,
+            totalIncome: 10000, // Income doubled
+            actualSavings: 1500, // Saved more than target ($1000)
+            recommendedSavings: 1000,
+            savingsPercentage: 15, // 1500/10000 = 15%
+        };
+
+        const history = [
+            { month: '2022-12', income: 5000, expenses: 3000, savings: 1000, needs: 1500, wants: 1500 }, // 20% savings rate
+            { month: '2023-01', income: 10000, expenses: 8500, savings: 1500, needs: 4000, wants: 4500 },
+        ];
+
+        const result = generateMonthlySummary({
+            currentMonth: '2023-01',
+            budgetSummary,
+            expenses: mockExpenses,
+            categories: mockCategories,
+            monthlyHistory: history,
+            currencyCode: 'USD'
+        });
+
+        // 1. Savings Health should show "fell"
+        // 20% -> 15%
+        expect(result.some(r => r.includes('Savings fell from 20% to 15%'))).toBe(true);
+
+        // 2. Savings Variance ("Savings exceeded plan by $500") should be SUPPRESSED
+        expect(result.some(r => r.includes('Savings exceeded plan'))).toBe(false);
+    });
 });
