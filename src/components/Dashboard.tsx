@@ -88,9 +88,7 @@ const Dashboard: React.FC = () => {
                                 budgetSummary={budgetSummary}
                                 cashBalance={budgetSummary.unallocatedCash}
                             />
-                            <div>
-                                <IfThisContinues />
-                            </div>
+                            <IfThisContinues />
                         </>
                     )}
 
