@@ -74,24 +74,29 @@ const IfThisContinues: React.FC = () => {
                 <div className="projection-stats-grid mb-8">
                     <div className="projection-stat-item">
                         <span className="stat-label">Avg. Monthly Income</span>
-                        <span className="stat-value">{formatCurrency(projection.averageIncome, data.currency)}</span>
+                        <span className="stat-value">{formatCurrency(projection.averageIncome, data.currency, { maximumFractionDigits: 0 })}</span>
                     </div>
                     <div className="projection-stat-item">
                         <span className="stat-label">Avg. Monthly Expenses</span>
-                        <span className="stat-value">{formatCurrency(projection.averageExpenses, data.currency)}</span>
+                        <span className="stat-value">{formatCurrency(projection.averageExpenses, data.currency, { maximumFractionDigits: 0 })}</span>
                     </div>
                     <div className="projection-stat-item">
                         <span className="stat-label">Avg. Monthly Savings</span>
                         <span className="stat-value" style={{ color: projection.averageSavings >= 0 ? 'var(--color-success)' : 'var(--color-error)' }}>
-                            {formatCurrency(projection.averageSavings, data.currency)}
+                            {formatCurrency(projection.averageSavings, data.currency, { maximumFractionDigits: 0 })}
                         </span>
                     </div>
                 </div>
 
-                <div className="what-this-buys mt-8 pt-6 border-top border-[var(--color-border)]">
-                    <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
-                        <span>🛍️</span> What This Buys You
-                    </h3>
+                <div className="what-this-buys mt-12 pt-8 border-top border-[var(--color-border)]">
+                    <div className="mb-6">
+                        <h3 className="text-xl font-bold flex items-center gap-2 mb-1">
+                            <span>🛍️</span> What This Buys You
+                        </h3>
+                        <p className="text-xs text-muted leading-tight">
+                            Your projected savings can cover <strong>one</strong> of these milestones at a time:
+                        </p>
+                    </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4">
                         <div>

@@ -72,6 +72,7 @@ describe('IfThisContinues', () => {
         // Verify "What This Buys You" section
         const sectionHeading = screen.getAllByText(/What This Buys You/i);
         expect(sectionHeading[0].tagName).toBe('H3');
+        expect(screen.getByText((content) => content.includes('Your projected savings can cover') && content.includes('one') && content.includes('at a time'))).toBeInTheDocument();
 
         // 2400 / 800 (avg expenses) = 3 months
         expect(screen.getByText(/Living Expenses/i)).toBeInTheDocument();
