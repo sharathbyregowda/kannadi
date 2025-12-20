@@ -5,6 +5,7 @@ import { formatCurrency } from '../utils/calculations';
 
 const IfThisContinues: React.FC = () => {
     const { monthlyTrends, data } = useFinance();
+    const [activeTab, setActiveTab] = React.useState<'projections' | 'buys'>('projections');
 
     const projection = useMemo(() => {
         const analysisMonths = getAnalysisMonths(monthlyTrends);
@@ -57,78 +58,90 @@ const IfThisContinues: React.FC = () => {
 
     return (
         <div className="card projection-card animate-fade-in mb-8">
-            <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-                <span>🔮</span> If This Continues...
-            </h3>
+            <div className="chart-tabs mb-6">
+                <button
+                    className={`tab-btn ${activeTab === 'projections' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('projections')}
+                >
+                    🔮 If This Continues...
+                </button>
+                <button
+                    className={`tab-btn ${activeTab === 'buys' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('buys')}
+                >
+                    🛍️ What This Buys You
+                </button>
+            </div>
 
-            <div className="projection-content">
-                <p className="projection-headline text-lg font-semibold mb-4 text-primary">
-                    {headline}
-                </p>
-
-                <p className="text-muted text-sm mb-6 leading-relaxed">
-                    Based on your behavior from the last {projection.monthsAnalyzed} completed months,
-                    your 12-month {outcomeLabel} is projected to be {formattedYearly}.
-                </p>
-
-                <div className="projection-stats-grid mb-8">
-                    <div className="projection-stat-item">
-                        <span className="stat-label">Avg. Monthly Income</span>
-                        <span className="stat-value">{formatCurrency(projection.averageIncome, data.currency, { maximumFractionDigits: 0 })}</span>
-                    </div>
-                    <div className="projection-stat-item">
-                        <span className="stat-label">Avg. Monthly Expenses</span>
-                        <span className="stat-value">{formatCurrency(projection.averageExpenses, data.currency, { maximumFractionDigits: 0 })}</span>
-                    </div>
-                    <div className="projection-stat-item">
-                        <span className="stat-label">Avg. Monthly Savings</span>
-                        <span className="stat-value" style={{ color: projection.averageSavings >= 0 ? 'var(--color-success)' : 'var(--color-error)' }}>
-                            {formatCurrency(projection.averageSavings, data.currency, { maximumFractionDigits: 0 })}
-                        </span>
-                    </div>
-                </div>
-
-                <div className="what-this-buys mt-12 pt-8 border-top border-[var(--color-border)]">
-                    <div className="mb-6">
-                        <h3 className="text-xl font-bold flex items-center gap-2 mb-1">
-                            <span>🛍️</span> What This Buys You
-                        </h3>
-                        <p className="text-xs text-muted leading-tight">
-                            Your projected savings can cover <strong>one</strong> of these milestones at a time:
+            <div className="projection-content tab-content animate-fade-in">
+                {activeTab === 'projections' ? (
+                    <>
+                        <p className="projection-headline text-lg font-semibold mb-4 text-primary">
+                            {headline}
                         </p>
-                    </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4">
-                        <div>
-                            {renderTimeBar("Living Expenses", projection.timeMetrics.monthsOfLivingExpenses, 12, "🕒")}
-                            {projection.timeMetrics.topCategoriesCovered[0] && renderTimeBar(
-                                projection.timeMetrics.topCategoriesCovered[0].name,
-                                projection.timeMetrics.topCategoriesCovered[0].monthsCovered,
-                                24,
-                                projection.timeMetrics.topCategoriesCovered[0].icon
-                            )}
+                        <p className="text-muted text-sm mb-6 leading-relaxed">
+                            Based on your behavior from the last {projection.monthsAnalyzed} completed months,
+                            your 12-month {outcomeLabel} is projected to be <strong>{formattedYearly}</strong>.
+                        </p>
+
+                        <div className="projection-stats-grid">
+                            <div className="projection-stat-item">
+                                <span className="stat-label">Avg. Monthly Income</span>
+                                <span className="stat-value">{formatCurrency(projection.averageIncome, data.currency, { maximumFractionDigits: 0 })}</span>
+                            </div>
+                            <div className="projection-stat-item">
+                                <span className="stat-label">Avg. Monthly Expenses</span>
+                                <span className="stat-value">{formatCurrency(projection.averageExpenses, data.currency, { maximumFractionDigits: 0 })}</span>
+                            </div>
+                            <div className="projection-stat-item">
+                                <span className="stat-label">Avg. Monthly Savings</span>
+                                <span className="stat-value" style={{ color: projection.averageSavings >= 0 ? 'var(--color-success)' : 'var(--color-error)' }}>
+                                    {formatCurrency(projection.averageSavings, data.currency, { maximumFractionDigits: 0 })}
+                                </span>
+                            </div>
                         </div>
-                        <div>
-                            {projection.timeMetrics.topCategoriesCovered.slice(1).map((cat) => (
-                                <React.Fragment key={cat.name}>
-                                    {renderTimeBar(cat.name, cat.monthsCovered, 24, cat.icon)}
-                                </React.Fragment>
-                            ))}
-                            <div className="time-metric-item">
-                                <div className="flex justify-between items-center text-sm">
-                                    <span className="flex items-center gap-2">
-                                        <span>🛡️</span> Emergency Buffer
-                                    </span>
-                                    <span className={`font-bold ${projection.timeMetrics.emergencyBufferStatus === 'Strong' ? 'text-success' :
-                                        projection.timeMetrics.emergencyBufferStatus === 'Healthy' ? 'text-primary' : 'text-warning'
-                                        }`}>
-                                        {projection.timeMetrics.emergencyBufferStatus}
-                                    </span>
+                    </>
+                ) : (
+                    <div className="what-this-buys">
+                        <div className="mb-6">
+                            <p className="text-xs text-muted leading-tight">
+                                Your projected savings can cover <strong>one</strong> of these milestones at a time:
+                            </p>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4">
+                            <div>
+                                {renderTimeBar("Living Expenses", projection.timeMetrics.monthsOfLivingExpenses, 12, "🕒")}
+                                {projection.timeMetrics.topCategoriesCovered[0] && renderTimeBar(
+                                    projection.timeMetrics.topCategoriesCovered[0].name,
+                                    projection.timeMetrics.topCategoriesCovered[0].monthsCovered,
+                                    24,
+                                    projection.timeMetrics.topCategoriesCovered[0].icon
+                                )}
+                            </div>
+                            <div>
+                                {projection.timeMetrics.topCategoriesCovered.slice(1).map((cat) => (
+                                    <React.Fragment key={cat.name}>
+                                        {renderTimeBar(cat.name, cat.monthsCovered, 24, cat.icon)}
+                                    </React.Fragment>
+                                ))}
+                                <div className="time-metric-item">
+                                    <div className="flex justify-between items-center text-sm">
+                                        <span className="flex items-center gap-2">
+                                            <span>🛡️</span> Emergency Buffer
+                                        </span>
+                                        <span className={`font-bold ${projection.timeMetrics.emergencyBufferStatus === 'Strong' ? 'text-success' :
+                                            projection.timeMetrics.emergencyBufferStatus === 'Healthy' ? 'text-primary' : 'text-warning'
+                                            }`}>
+                                            {projection.timeMetrics.emergencyBufferStatus}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                )}
             </div>
         </div>
     );
