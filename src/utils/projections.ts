@@ -1,10 +1,15 @@
 import type { MonthlyData, Expense, CustomCategory } from '../types';
 import { getCurrentMonth } from './calculations';
 
+export interface CategoryCoverage {
+    name: string;
+    icon: string;
+    monthsCovered: number;
+}
+
 export interface TimeMetrics {
     monthsOfLivingExpenses: number;
-    yearsOfBasicLiving: number;
-    yearsOfSchoolFees: number;
+    topCategoriesCovered: CategoryCoverage[];
     emergencyBufferStatus: 'Basic' | 'Healthy' | 'Strong';
 }
 
@@ -12,8 +17,6 @@ export interface ProjectionResult {
     averageIncome: number;
     averageExpenses: number;
     averageSavings: number;
-    averageNeeds: number;
-    averageSchoolFees: number;
     yearlyProjection: number;
     headline: string;
     monthsAnalyzed: number;
@@ -49,41 +52,42 @@ export const calculateProjections = (
     }
 
     const monthKeys = new Set(analysisMonths.map(m => m.month));
-
-    // Find "School Fees" category or subcategory
-    const schoolFeesCategoryIds = categories
-        .filter(c => c.name.toLowerCase().includes('school fees'))
-        .map(c => c.id);
-
     const relevantExpenses = expenses.filter(e => monthKeys.has(e.month));
 
-    const totalSchoolFees = relevantExpenses
-        .filter(e =>
-            schoolFeesCategoryIds.includes(e.categoryId) ||
-            (e.subcategoryId && schoolFeesCategoryIds.includes(e.subcategoryId)) ||
-            e.description.toLowerCase().includes('school fees')
-        )
-        .reduce((sum, e) => sum + e.amount, 0);
+    // Analyze top categories
+    const categoryTotals: Record<string, number> = {};
+    relevantExpenses.forEach(e => {
+        categoryTotals[e.categoryId] = (categoryTotals[e.categoryId] || 0) + e.amount;
+    });
+
+    const count = analysisMonths.length;
+    const topCategoryIds = Object.entries(categoryTotals)
+        .sort(([, a], [, b]) => b - a)
+        .slice(0, 3);
 
     const totalIncome = analysisMonths.reduce((sum, m) => sum + m.income, 0);
     const totalExpenses = analysisMonths.reduce((sum, m) => sum + m.expenses, 0);
     const totalSavings = analysisMonths.reduce((sum, m) => sum + m.savings, 0);
-    const totalNeeds = analysisMonths.reduce((sum, m) => sum + m.needs, 0);
 
-    const count = analysisMonths.length;
     const averageIncome = totalIncome / count;
     const averageExpenses = totalExpenses / count;
     const averageSavings = totalSavings / count;
-    const averageNeeds = totalNeeds / count;
-    const averageSchoolFees = totalSchoolFees / count;
 
     const yearlyProjection = averageSavings * 12;
     const headline = generateProjectionHeadline(yearlyProjection);
 
     // Time Metrics
     const monthsOfLivingExpenses = (averageExpenses > 0 && yearlyProjection > 0) ? yearlyProjection / averageExpenses : 0;
-    const yearsOfBasicLiving = (averageNeeds * 12 > 0 && yearlyProjection > 0) ? yearlyProjection / (averageNeeds * 12) : 0;
-    const yearsOfSchoolFees = (averageSchoolFees * 12 > 0 && yearlyProjection > 0) ? yearlyProjection / (averageSchoolFees * 12) : 0;
+
+    const topCategoriesCovered: CategoryCoverage[] = topCategoryIds.map(([id, total]) => {
+        const cat = categories.find(c => c.id === id);
+        const avgMonthlyCat = total / count;
+        return {
+            name: cat?.name || 'Unknown',
+            icon: cat?.icon || '💰',
+            monthsCovered: avgMonthlyCat > 0 && yearlyProjection > 0 ? yearlyProjection / avgMonthlyCat : 0
+        };
+    });
 
     let emergencyBufferStatus: 'Basic' | 'Healthy' | 'Strong' = 'Basic';
     if (monthsOfLivingExpenses > 6) emergencyBufferStatus = 'Strong';
@@ -93,15 +97,12 @@ export const calculateProjections = (
         averageIncome,
         averageExpenses,
         averageSavings,
-        averageNeeds,
-        averageSchoolFees,
         yearlyProjection,
         headline,
         monthsAnalyzed: count,
         timeMetrics: {
             monthsOfLivingExpenses,
-            yearsOfBasicLiving,
-            yearsOfSchoolFees,
+            topCategoriesCovered,
             emergencyBufferStatus
         }
     };

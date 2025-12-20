@@ -19,9 +19,23 @@ const IfThisContinues: React.FC = () => {
     const headline = projection.headline.replace('##AMOUNT##', formattedYearly);
     const outcomeLabel = projection.yearlyProjection >= 0 ? 'total savings' : 'spending exceeding income';
 
-    const renderTimeBar = (label: string, value: number, unit: string, max: number, icon: string) => {
+    const formatDuration = (value: number) => {
+        if (value > 18) {
+            const years = value / 12;
+            return {
+                value: years < 10 ? years.toFixed(1) : Math.round(years).toString(),
+                unit: years === 1 ? 'year' : 'years'
+            };
+        }
+        return {
+            value: Math.round(value).toString(),
+            unit: value === 1 ? 'month' : 'months'
+        };
+    };
+
+    const renderTimeBar = (label: string, value: number, max: number, icon: string) => {
         const percentage = Math.min((value / max) * 100, 100);
-        const displayValue = value < 1 ? value.toFixed(1) : Math.round(value);
+        const { value: displayValue, unit } = formatDuration(value);
 
         return (
             <div className="time-metric-item mb-4">
@@ -29,7 +43,7 @@ const IfThisContinues: React.FC = () => {
                     <span className="flex items-center gap-2">
                         <span>{icon}</span> {label}
                     </span>
-                    <span className="font-semibold">{displayValue} {unit}{value !== 1 ? 's' : ''}</span>
+                    <span className="font-semibold">{displayValue} {unit}</span>
                 </div>
                 <div className="time-bar-bg h-1.5 bg-black/10 dark:bg-white/10 rounded-full overflow-hidden">
                     <div
@@ -75,28 +89,33 @@ const IfThisContinues: React.FC = () => {
                 </div>
 
                 <div className="what-this-buys mt-8 pt-6 border-top border-[var(--color-border)]">
-                    <h4 className="text-sm font-bold uppercase tracking-widest text-muted mb-6 flex items-center gap-2">
-                        <span className="h-px bg-[var(--color-border)] flex-grow"></span>
-                        What This Buys You
-                        <span className="h-px bg-[var(--color-border)] flex-grow"></span>
-                    </h4>
+                    <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+                        <span>🛍️</span> What This Buys You
+                    </h3>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4">
                         <div>
-                            {renderTimeBar("Living Expenses", projection.timeMetrics.monthsOfLivingExpenses, "month", 12, "🕒")}
-                            {renderTimeBar("Basic Living", projection.timeMetrics.yearsOfBasicLiving, "year", 5, "🛡️")}
+                            {renderTimeBar("Living Expenses", projection.timeMetrics.monthsOfLivingExpenses, 12, "🕒")}
+                            {projection.timeMetrics.topCategoriesCovered[0] && renderTimeBar(
+                                projection.timeMetrics.topCategoriesCovered[0].name,
+                                projection.timeMetrics.topCategoriesCovered[0].monthsCovered,
+                                24,
+                                projection.timeMetrics.topCategoriesCovered[0].icon
+                            )}
                         </div>
                         <div>
-                            {projection.averageSchoolFees > 0 &&
-                                renderTimeBar("School Fees", projection.timeMetrics.yearsOfSchoolFees, "year", 10, "🎓")
-                            }
+                            {projection.timeMetrics.topCategoriesCovered.slice(1).map((cat) => (
+                                <React.Fragment key={cat.name}>
+                                    {renderTimeBar(cat.name, cat.monthsCovered, 24, cat.icon)}
+                                </React.Fragment>
+                            ))}
                             <div className="time-metric-item">
                                 <div className="flex justify-between items-center text-sm">
                                     <span className="flex items-center gap-2">
                                         <span>🛡️</span> Emergency Buffer
                                     </span>
                                     <span className={`font-bold ${projection.timeMetrics.emergencyBufferStatus === 'Strong' ? 'text-success' :
-                                            projection.timeMetrics.emergencyBufferStatus === 'Healthy' ? 'text-primary' : 'text-warning'
+                                        projection.timeMetrics.emergencyBufferStatus === 'Healthy' ? 'text-primary' : 'text-warning'
                                         }`}>
                                         {projection.timeMetrics.emergencyBufferStatus}
                                     </span>

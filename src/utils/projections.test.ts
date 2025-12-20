@@ -53,26 +53,26 @@ describe('Projection Logic', () => {
         expect(result?.headline).toBe('Savings grow by ~##AMOUNT##.');
     });
 
-    it('calculateProjections handles school fees and time metrics', () => {
+    it('calculateProjections handles top categories and time metrics', () => {
         const history: MonthlyData[] = [
             { month: '2023-01', income: 4000, expenses: 3000, savings: 1000, needs: 2000, wants: 1000 },
             { month: '2023-02', income: 4000, expenses: 3000, savings: 1000, needs: 2000, wants: 1000 },
             { month: '2023-03', income: 4000, expenses: 3000, savings: 1000, needs: 2000, wants: 1000 },
         ];
+        const categories = [{ id: 'c1', name: 'Rent', icon: '🏠', type: 'needs' }];
         const expenses: any[] = [
-            { id: '1', amount: 500, description: 'John School Fees', month: '2023-01', categoryId: 'c1', categoryType: 'needs' },
-            { id: '2', amount: 500, description: 'Other', month: '2023-01', categoryId: 'c1', categoryType: 'needs' },
+            { id: '1', amount: 500, description: 'Rent payment', month: '2023-01', categoryId: 'c1', categoryType: 'needs' },
         ];
 
         // Projected savings = 1000 * 12 = 12000
         // Avg expenses = 3000
         // Months covered = 12000 / 3000 = 4 months
-        // School fees = (500 + 0 + 0) / 3 = 166.66
-        const result = calculateProjections(history, expenses, []);
+        // Rent = (500 + 0 + 0) / 3 = 166.66
+        const result = calculateProjections(history, expenses, categories as any);
 
         expect(result?.timeMetrics.monthsOfLivingExpenses).toBe(4);
-        expect(result?.timeMetrics.emergencyBufferStatus).toBe('Healthy');
-        expect(result?.averageSchoolFees).toBeGreaterThan(160);
+        expect(result?.timeMetrics.topCategoriesCovered[0].name).toBe('Rent');
+        expect(result?.timeMetrics.topCategoriesCovered[0].monthsCovered).toBeGreaterThan(70); // 12000 / 166.66
     });
 
     it('calculateProjections handles deficit (spending > income)', () => {
@@ -87,5 +87,6 @@ describe('Projection Logic', () => {
         expect(result?.yearlyProjection).toBe(-2400);
         expect(result?.headline).toBe('Spending exceeds income by ~##AMOUNT##.');
         expect(result?.timeMetrics.monthsOfLivingExpenses).toBe(0); // No buffer if deficit
+        expect(result?.timeMetrics.topCategoriesCovered).toHaveLength(0);
     });
 });
