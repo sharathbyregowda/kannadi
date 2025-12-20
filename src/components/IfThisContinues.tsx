@@ -15,8 +15,9 @@ const IfThisContinues: React.FC = () => {
         return null; // Not enough data (requires at least 3 completed months)
     }
 
-    const formattedYearly = formatCurrency(Math.abs(projection.yearlyProjection), data.currency);
+    const formattedYearly = formatCurrency(Math.abs(projection.yearlyProjection), data.currency, { maximumFractionDigits: 0 });
     const headline = projection.headline.replace('##AMOUNT##', formattedYearly);
+    const outcomeLabel = projection.yearlyProjection >= 0 ? 'total savings' : 'spending exceeding income';
 
     return (
         <div className="card projection-card animate-fade-in mb-8">
@@ -31,7 +32,7 @@ const IfThisContinues: React.FC = () => {
 
                 <p className="text-muted text-sm mb-6 leading-relaxed">
                     Based on your behavior from the last {projection.monthsAnalyzed} completed months,
-                    your 12-month outcome is projected to be {formattedYearly}.
+                    your 12-month {outcomeLabel} is projected to be {formattedYearly}.
                 </p>
 
                 <div className="projection-stats-grid">

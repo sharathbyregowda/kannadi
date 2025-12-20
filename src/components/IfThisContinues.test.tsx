@@ -58,7 +58,8 @@ describe('IfThisContinues', () => {
 
         // Savings grow by... (200 * 12 = 2400)
         expect(screen.getByText(/Savings grow by/i)).toBeInTheDocument();
-        // The amount appears in the headline and the explanation paragraph
+        // The amount appears in the headline and the explanation paragraph as "total savings"
+        expect(screen.getByText(/your 12-month total savings is projected to be/i)).toBeInTheDocument();
         const amounts = screen.getAllByText(/\$2,400/i);
         expect(amounts.length).toBeGreaterThanOrEqual(1);
     });
