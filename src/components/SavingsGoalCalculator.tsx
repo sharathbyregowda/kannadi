@@ -28,16 +28,30 @@ const SavingsGoalCalculator: React.FC = () => {
         }
 
         const totalIncome = analysisMonths.reduce((sum, m) => sum + m.income, 0);
+
+        // Calculate total expenses (Needs + Wants) from MonthlyData
+        // Note: MonthlyData.expenses excludes savings, but verify with calculation logic if needed
         const totalExpenses = analysisMonths.reduce((sum, m) => sum + m.expenses, 0);
-        // Pure savings capacity (Income - Expenses), ignoring investments/savings transfers for this metric
-        const averageSavings = (totalIncome - totalExpenses) / analysisMonths.length;
+
+        // Find relevant months to filter raw expenses for Allocated Savings
+        const monthKeys = new Set(analysisMonths.map(m => m.month));
+
+        // Calculate Total Allocated Savings (money already moved to savings/investments)
+        const totalAllocatedSavings = data.expenses
+            .filter(e => monthKeys.has(e.month) && e.categoryType === 'savings')
+            .reduce((sum, e) => sum + e.amount, 0);
+
+        // Cash Balance = Income - Expenses (Needs+Wants) - Allocated Savings
+        // This represents unallocated cash flow available for NEW goals
+        const totalCashBalance = totalIncome - totalExpenses - totalAllocatedSavings;
+        const averageCashBalance = totalCashBalance / analysisMonths.length;
 
         return {
             insufficientData: false,
-            averageSavings: Math.max(0, averageSavings), // Floor at 0 for calculation safety
+            averageSavings: Math.max(0, averageCashBalance), // Floor at 0 for calculation safety
             monthCount: analysisMonths.length
         };
-    }, [monthlyTrends, data.currentMonth]);
+    }, [monthlyTrends, data.currentMonth, data.expenses]);
 
     const calculateGoal = () => {
         const target = parseFloat(targetAmount);
@@ -72,7 +86,7 @@ const SavingsGoalCalculator: React.FC = () => {
                 requiredMonthly,
                 currentAverageSavings: currentAvg,
                 monthsToGoal: monthsNeeded,
-                message: `At your current saving rate (${formatCurrency(currentAvg, data.currency)}/mo), you would need ${Math.ceil(monthsNeeded)} months.`
+                message: `At your current saving rate (${formatCurrency(currentAvg, data.currency, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/mo), you would need ${Math.ceil(monthsNeeded)} months.`
             };
         } else {
             calcResult = {

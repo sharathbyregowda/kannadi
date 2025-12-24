@@ -15,7 +15,7 @@ describe('SavingsGoalCalculator', () => {
         data: {
             currentMonth: '2023-08',
             currency: 'USD',
-            expenses: [],
+            expenses: [], // Will be overridden in specific tests
             incomes: [],
         },
         monthlyTrends: [],
@@ -54,8 +54,25 @@ describe('SavingsGoalCalculator', () => {
         expect(screen.getByLabelText(/Timeframe/i)).toBeInTheDocument();
     });
 
-    it('calculates "Achievable" goal correctly', () => {
-        // Average savings = 2000/mo
+    it('calculates "Achievable" goal correctly (Net Savings - Allocated Savings)', () => {
+        // Scenario: Net Savings is 2000/mo.
+        // Allocated Savings (Investments) = 500/mo.
+        // Available Cash Balance = 1500/mo.
+
+        const mockExpenses = [
+            // Month 1
+            { month: '2023-07', amount: 500, categoryType: 'savings' },
+            // Month 2
+            { month: '2023-06', amount: 500, categoryType: 'savings' },
+            // Month 3
+            { month: '2023-05', amount: 500, categoryType: 'savings' }
+        ];
+
+        vi.mocked(useFinance).mockReturnValue({
+            ...mockFinanceData,
+            data: { ...mockFinanceData.data, expenses: mockExpenses }
+        } as any);
+
         vi.mocked(getAnalysisMonths).mockReturnValue([
             { month: '2023-07', income: 5000, expenses: 3000, savings: 2000 } as any,
             { month: '2023-06', income: 5000, expenses: 3000, savings: 2000 } as any,
@@ -64,14 +81,15 @@ describe('SavingsGoalCalculator', () => {
 
         render(<SavingsGoalCalculator />);
 
-        // Goal: 6000 in 3 months = 2000/mo needed based on 2000 avg
-        fireEvent.change(screen.getByLabelText(/Target Amount/i), { target: { value: '6000' } });
+        // Goal: 4500 in 3 months = 1500/mo needed.
+        // Available: 2000 (Net) - 500 (Allocated) = 1500. Matches exactly.
+        fireEvent.change(screen.getByLabelText(/Target Amount/i), { target: { value: '4500' } });
         fireEvent.change(screen.getByLabelText(/Timeframe/i), { target: { value: '3' } });
 
         expect(screen.getByText(/Goal Achievable/i)).toBeInTheDocument();
-        expect(screen.getByText(/Goal Achievable/i)).toBeInTheDocument();
-        // Match $2,000 with optional decimals - appears twice (Required & Current)
-        expect(screen.getAllByText(/\$2,000(\.00)?\/mo/).length).toBeGreaterThanOrEqual(1);
+
+        // Match $1,500 with optional decimals
+        expect(screen.getAllByText(/\$1,500(\.00)?\/mo/).length).toBeGreaterThanOrEqual(1);
     });
 
     it('calculates "Partially Achievable" correctly', () => {
