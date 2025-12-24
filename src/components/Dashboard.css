@@ -180,6 +180,11 @@
     border-bottom-color: #34d399;
 }
 
+.tab-link.active-breakdown {
+    color: #f59e0b;
+    border-bottom-color: #f59e0b;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .sidebar {

@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import BudgetOverview from '../components/BudgetOverview';
 import IncomeVsExpenses from '../components/IncomeVsExpenses';
+import CategoryBreakdown from '../components/CategoryBreakdown';
 import '../components/Dashboard.css';
 
-type ReportType = 'budget' | 'trends' | 'savings';
+type ReportType = 'budget' | 'trends' | 'breakdown';
 
 const ReportsPage: React.FC = () => {
     const [activeReport, setActiveReport] = useState<ReportType>('budget');
@@ -29,6 +30,12 @@ const ReportsPage: React.FC = () => {
                 >
                     📈 Trends
                 </button>
+                <button
+                    onClick={() => setActiveReport('breakdown')}
+                    className={`tab-link ${activeReport === 'breakdown' ? 'active-breakdown' : ''}`}
+                >
+                    📊 Breakdown
+                </button>
             </div>
 
             {/* Report Content */}
@@ -43,6 +50,12 @@ const ReportsPage: React.FC = () => {
                 {activeReport === 'trends' && (
                     <div className="card report-tabs-card">
                         <IncomeVsExpenses standalone={false} />
+                    </div>
+                )}
+
+                {activeReport === 'breakdown' && (
+                    <div className="card report-tabs-card">
+                        <CategoryBreakdown />
                     </div>
                 )}
             </div>
