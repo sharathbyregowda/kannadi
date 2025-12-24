@@ -1091,3 +1091,19 @@
 .financial-journey-container {
     grid-column: span 12;
 }
+
+/* Savings Goal Calculator */
+.goal-result {
+    transition: all 0.3s ease;
+}
+
+.goal-result h5 {
+    letter-spacing: -0.01em;
+}
+
+@media (max-width: 640px) {
+    .savings-goal-calculator .grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-sm);
+    }
+}
