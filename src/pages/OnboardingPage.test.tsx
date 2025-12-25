@@ -58,29 +58,29 @@ describe('OnboardingPage', () => {
         expect(screen.getByText(/Step 1: Choose your Currency/i)).toBeDefined();
     });
 
-    it('navigates through the steps', () => {
+    it('navigates through the steps in correct order', () => {
         const { container } = render(
             <BrowserRouter>
                 <OnboardingPage />
             </BrowserRouter>
         );
 
-        // Step 1 -> 2 (only one Continue button on first step)
+        // Step 1 -> 2 (Currency -> Income, only one Continue button on first step)
         const continueButtons1 = screen.getAllByRole('button', { name: /Continue/i });
         fireEvent.click(continueButtons1[continueButtons1.length - 1]);
-        expect(screen.getByText(/Step 2: Review Categories/i)).toBeDefined();
+        expect(screen.getByText(/Step 2: Add Your Income/i)).toBeDefined(); // Income is now step 2
 
-        // Step 2 -> 3 (now we have Back and Continue)
+        // Step 2 -> 3 (Income -> Categories)
         const continueButtons2 = screen.getAllByRole('button', { name: /Continue/i });
         fireEvent.click(continueButtons2[continueButtons2.length - 1]);
-        expect(screen.getByText(/Step 3: Add Your Income/i)).toBeDefined();
+        expect(screen.getByText(/Step 3: Review Categories/i)).toBeDefined(); // Categories is now step 3
 
-        // Step 3 -> 4
+        // Step 3 -> 4 (Categories -> Expenses)
         const continueButtons3 = screen.getAllByRole('button', { name: /Continue/i });
         fireEvent.click(continueButtons3[continueButtons3.length - 1]);
         expect(screen.getByText(/Step 4: Add Your Expenses/i)).toBeDefined();
 
-        // Step 4 -> 5
+        // Step 4 -> 5 (Expenses -> Completion)
         const continueButtons4 = screen.getAllByRole('button', { name: /Continue/i });
         fireEvent.click(continueButtons4[continueButtons4.length - 1]);
         expect(screen.getByText(/You're All Set!/i)).toBeDefined();

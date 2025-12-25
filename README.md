@@ -5,24 +5,18 @@ A modern, privacy-focused personal finance tracker built to help you master the 
 ![Simple Finance Dashboard](https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&q=80&w=2000)
 *(Replace with actual dashboard screenshot)*
 
-## Features 🌟
-
-- **App Shell Architecture**: A modern, responsive layout with sidebar navigation and dedicated workspaces.
+- **Premium Onboarding Flow**: A revitalized, multi-step onboarding process with clear progress tracking and logic-driven step ordering.
 - **Dashboard**: High-level financial health check.
+    - **Redesigned Financial Journey**: Horizontal card-based layout featuring radial progress indicators for current vs. target percentages.
+    - **Insight-Driven Summaries**: Monthly and Yearly summaries transformed into visual "Insight Cards" with color-coded sentiment badges and category icons.
+    - **Unified Projections View**: A side-by-side dashboard for forecasts and milestones, removing tabs for better scannability.
     - **Savings Summary**: Instant view of your net savings and rates.
-    - **Monthly Summary**: Clear, English-language breakdown of your spending.
-    - **Smart Projections**: "If this continues" forecast alongside a **Savings Goal Calculator**.
-- **Reports & Analysis**: Deep dives into your data.
-    - **Budget vs Actual**: Visual progress bars for Needs, Wants, and Savings.
-    - **Income vs Expenses**: Trend analysis over time.
-- **Transactions Workspace**:
-    - **Income Management**: Log multiple income sources.
-    - **Expense Ledger**: Detailed record of all spending.
-    - **Filtering**: Sort and filter by date, category, or amount.
+- **Reports & Analysis**: Deep dives into your data with visual progress bars and trend analysis.
+- **Transactions Workspace**: Manage Income and Expenses with a detailed ledger.
 - **Settings & Configuration**:
-    - **Currency Support**: Choose your preferred currency symbol (£, $, €, etc.).
+    - **Currency Support**: Choose your preferred currency symbol.
     - **Custom Categories**: Manage your own spending categories with emoji support.
-    - **Data Management**: Import/Export your data safely.
+    - **Robust Data Portability**: Securely Backup and Restore your data with backward compatibility support.
 
 ## 🚀 Tech Stack
 

@@ -40,25 +40,59 @@ const Settings: React.FC = () => {
         const file = event.target.files?.[0];
         if (!file) return;
 
+        console.log('Starting import. File:', file.name, 'Size:', file.size);
+
         const reader = new FileReader();
+        reader.onerror = (error) => {
+            console.error('FileReader error:', error);
+            alert('Error reading file. Please try again.');
+        };
+
         reader.onload = (e) => {
             try {
+                console.log('File loaded, parsing JSON...');
                 const json = JSON.parse(e.target?.result as string);
+                console.log('JSON parsed successfully. Data:', json);
+
                 // Basic validation check
                 if (json.incomes && json.expenses && json.customCategories) {
+                    console.log('Validation passed. Showing confirmation dialog...');
                     if (window.confirm('This will replace your current data with the backup. Are you sure?')) {
-                        importData(json);
-                        alert('Data restored successfully!');
+                        console.log('User confirmed. Importing data...');
+                        try {
+                            importData(json);
+                            console.log('Data imported successfully');
+                            alert('Data restored successfully!');
+                            // Close settings panel after successful import
+                            setIsOpen(false);
+                        } catch (importError) {
+                            console.error('Import error:', importError);
+                            alert('Error importing data: ' + (importError instanceof Error ? importError.message : 'Unknown error'));
+                        }
+                    } else {
+                        console.log('User cancelled import');
                     }
                 } else {
-                    alert('Invalid backup file format.');
+                    console.error('Validation failed. Missing required fields:', {
+                        hasIncomes: !!json.incomes,
+                        hasExpenses: !!json.expenses,
+                        hasCategories: !!json.customCategories
+                    });
+                    alert('Invalid backup file format. Missing required fields (incomes, expenses, or categories).');
                 }
-            } catch (error) {
-                alert('Error reading file. Please ensure it is a valid JSON backup.');
-                console.error('Import error:', error);
+            } catch (parseError) {
+                console.error('JSON parse error:', parseError);
+                alert('Error reading file. Please ensure it is a valid JSON backup.\n\nDetails: ' + (parseError instanceof Error ? parseError.message : 'Parse failed'));
             }
         };
-        reader.readAsText(file);
+
+        try {
+            reader.readAsText(file);
+        } catch (readError) {
+            console.error('Error starting file read:', readError);
+            alert('Error reading file. Please try again.');
+        }
+
         // Reset input
         event.target.value = '';
     };

@@ -1371,3 +1371,723 @@
         gap: var(--spacing-sm);
     }
 }
+/* ========================================
+   FINANCIAL JOURNEY - REDESIGNED
+   Horizontal Card Layout with Radial Progress
+   ======================================== */
+
+/* Cards Container - Stacked Vertically */
+.financial-journey-cards-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Individual Horizontal Card */
+.financial-journey-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.financial-journey-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-color: var(--color-primary);
+}
+
+/* Card Header */
+.financial-journey-card-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.financial-journey-card-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.financial-journey-card-title {
+    flex: 1;
+}
+
+.financial-journey-card-title h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0 0 0.25rem 0;
+    color: var(--text-primary);
+}
+
+.financial-journey-card-status {
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Card Body - Flexbox Layout */
+.financial-journey-card-body {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+}
+
+.financial-journey-progress-section {
+    flex-shrink: 0;
+}
+
+.financial-journey-details-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Radial Progress Component */
+.radial-progress-container {
+    position: relative;
+    display: inline-block;
+}
+
+.radial-progress-svg {
+    transform: scaleX(-1);
+}
+
+.radial-progress-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.radial-progress-percentage {
+    font-size: 2rem;
+    font-weight: 700;
+    font-family: 'Outfit', monospace;
+    line-height: 1;
+    margin-bottom: 0.25rem;
+}
+
+.radial-progress-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 500;
+}
+
+.radial-progress-status {
+    font-size: 1.25rem;
+    margin-top: 0.25rem;
+    color: var(--color-success);
+}
+
+.radial-progress-status.warning {
+    color: var(--color-warning);
+}
+
+/* Stats Grid */
+.financial-journey-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+.financial-journey-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.financial-journey-stat .stat-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 500;
+}
+
+.financial-journey-stat .stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    font-family: 'Outfit', monospace;
+    color: var(--text-primary);
+}
+
+/* Expand Button */
+.financial-journey-expand-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.financial-journey-expand-btn:hover {
+    background-color: var(--color-bg-tertiary);
+    border-color: var(--color-primary);
+}
+
+.financial-journey-expand-btn span {
+    font-size: 0.875rem;
+}
+
+/* Contributors Section (Expandable) */
+.financial-journey-contributors {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: var(--color-bg-secondary);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+    animation: fadeIn 0.3s ease-out;
+}
+
+.financial-journey-contributor-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.financial-journey-contributor-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.contributor-name {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.contributor-icon {
+    font-size: 1.25rem;
+}
+
+.contributor-percentage {
+    font-size: 1rem;
+    font-weight: 700;
+    font-family: 'Outfit', monospace;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .financial-journey-card-body {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1.5rem;
+    }
+
+    .financial-journey-stats {
+        grid-template-columns: 1fr;
+        width: 100%;
+    }
+
+    .financial-journey-progress-section {
+        align-self: center;
+    }
+
+    .radial-progress-percentage {
+        font-size: 1.75rem;
+    }
+
+    .financial-journey-stat .stat-value {
+        font-size: 1.25rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .financial-journey-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .financial-journey-card-icon {
+        width: 48px;
+        height: 48px;
+    }
+
+    .financial-journey-card-icon span {
+        font-size: 1.5rem !important;
+    }
+}
+
+/* ========================================
+   MONTHLY SUMMARY - REDESIGNED
+   Visual Insight Cards with Color Coding
+   ======================================== */
+
+.monthly-summary-redesigned {
+    margin-top: var(--spacing-xl);
+    margin-bottom: var(--spacing-xl);
+}
+
+.monthly-summary-header {
+    margin-bottom: 1.5rem;
+}
+
+.monthly-summary-header h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.summary-icon {
+    font-size: 1.75rem;
+}
+
+/* 2-Column Grid */
+.insights-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+/* Individual Insight Card */
+.insight-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+    display: flex;
+    gap: 1rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.insight-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+}
+
+.insight-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+/* Color Coding by Type */
+.insight-card.insight-positive::before {
+    background: linear-gradient(to bottom, #10b981, #059669);
+}
+
+.insight-card.insight-positive {
+    border-left-color: #10b981;
+}
+
+.insight-card.insight-warning::before {
+    background: linear-gradient(to bottom, #f59e0b, #d97706);
+}
+
+.insight-card.insight-warning {
+    border-left-color: #f59e0b;
+}
+
+.insight-card.insight-info::before {
+    background: linear-gradient(to bottom, #3b82f6, #2563eb);
+}
+
+.insight-card.insight-info {
+    border-left-color: #3b82f6;
+}
+
+/* Icon Wrapper */
+.insight-icon-wrapper {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.insight-card.insight-positive .insight-icon-wrapper {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+}
+
+.insight-card.insight-warning .insight-icon-wrapper {
+    background-color: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+}
+
+.insight-card.insight-info .insight-icon-wrapper {
+    background-color: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+}
+
+/* Content */
+.insight-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+/* Badge */
+.insight-badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+/* Text */
+.insight-text {
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+/* Hover Effects */
+.insight-card:hover .insight-icon-wrapper {
+    transform: scale(1.1);
+}
+
+.insight-card.insight-positive:hover .insight-icon-wrapper {
+    background-color: rgba(16, 185, 129, 0.2);
+}
+
+.insight-card.insight-warning:hover .insight-icon-wrapper {
+    background-color: rgba(245, 158, 11, 0.2);
+}
+
+.insight-card.insight-info:hover .insight-icon-wrapper {
+    background-color: rgba(59, 130, 246, 0.2);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .insights-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .insight-card {
+        padding: 1rem;
+    }
+    
+    .insight-icon-wrapper {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+@media (max-width: 480px) {
+    .insight-text {
+        font-size: 0.875rem;
+    }
+}
+
+/* ========================================
+   PROJECTIONS - UNIFIED REDESIGN
+   Side-by-Side Layout, No Tabs
+   ======================================== */
+
+.projections-unified {
+    margin-top: var(--spacing-xl);
+}
+
+.projections-header {
+    margin-bottom: 1.5rem;
+}
+
+.projections-header h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.projection-icon {
+    font-size: 1.75rem;
+}
+
+/* Side-by-Side Layout */
+.projections-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+/* LEFT SIDE: Forecast */
+.projection-forecast {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.forecast-headline {
+    padding: 1.5rem;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+}
+
+.forecast-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 1rem;
+}
+
+.forecast-badge.forecast-positive {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+}
+
+.forecast-badge.forecast-negative {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+.forecast-amount {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 0.75rem 0;
+}
+
+.forecast-description {
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+/* Forecast Stats - Matching Savings Cards Style */
+.forecast-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.forecast-stat-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    transition: all 0.3s ease;
+}
+
+.forecast-stat-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.stat-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    font-family: 'Outfit', monospace;
+    color: var(--text-primary);
+}
+
+/* RIGHT SIDE: Coverage */
+.projection-coverage {
+    padding: 1.5rem;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+}
+
+.coverage-header {
+    margin-bottom: 1.5rem;
+}
+
+.coverage-header h4 {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 0.5rem 0;
+}
+
+.coverage-header p {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+.coverage-items {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.coverage-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.coverage-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.coverage-icon {
+    font-size: 1.25rem;
+}
+
+.coverage-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.coverage-duration {
+    font-size: 1rem;
+    font-family: 'Outfit', monospace;
+    color: var(--text-primary);
+}
+
+.coverage-duration strong {
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.coverage-bar {
+    height: 8px;
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+}
+
+.coverage-bar-fill {
+    height: 100%;
+    border-radius: var(--radius-md);
+    transition: width 1s ease-out;
+}
+
+/* Emergency Buffer Special Styling */
+.coverage-item.emergency-buffer {
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.buffer-status {
+    font-weight: 600;
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-md);
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+}
+
+.buffer-status.buffer-strong {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+}
+
+.buffer-status.buffer-healthy {
+    background-color: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+}
+
+.buffer-status.buffer-weak {
+    background-color: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .projections-layout {
+        grid-template-columns: 1fr;
+    }
+    
+    .projection-forecast {
+        order: 1;
+    }
+    
+    .projection-coverage {
+        order: 2;
+    }
+}
+
+@media (max-width: 768px) {
+    .forecast-stats {
+        gap: 0.75rem;
+    }
+    
+    .forecast-stat-card {
+        padding: 1rem;
+    }
+    
+    .stat-icon {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .stat-value {
+        font-size: 1.25rem;
+    }
+}

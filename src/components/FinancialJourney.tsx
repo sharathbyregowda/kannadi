@@ -1,8 +1,9 @@
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { getFinancialPersona } from '../utils/journey';
 import { calculateCategoryBreakdown } from '../utils/calculations';
 import type { MonthlyData, Expense, CustomCategory, BudgetSummary } from '../types';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
 interface FinancialJourneyProps {
     data: MonthlyData[];
@@ -50,58 +51,162 @@ const FinancialJourney: React.FC<FinancialJourneyProps> = ({ data, expenses, cat
     const safeRound = (val: number) => isNaN(val) ? 0 : Math.round(val);
     const ratioString = `${safeRound(stats.needsPercentage)}/${safeRound(stats.wantsPercentage)}/${safeRound(stats.savingsPercentage)}`;
 
-    // Column Card Component based on Wireframe
-    const CategoryColumn = ({ title, target, current, items, color, bgClass }: { title: string, target: number, current: number, items: typeof topCategories.needs, color: string, bgClass: string }) => (
-        <div className={`flex flex-col h-full rounded-xl overflow-hidden border border-[var(--border-color)] ${bgClass} transition-colors duration-300`}>
-            {/* Header */}
-            <div className="p-4 border-b border-black/5 dark:border-white/5 text-center">
-                <h4 className="font-bold text-lg tracking-wide">{title}</h4>
-            </div>
+    // Radial Progress Circle Component
+    const RadialProgress = ({ percentage, target, color, size = 120 }: { percentage: number, target: number, color: string, size?: number }) => {
+        const radius = (size - 20) / 2;
+        const circumference = 2 * Math.PI * radius;
+        const offset = circumference - (Math.min(percentage, 100) / 100) * circumference;
+        const isOnTrack = Math.abs(percentage - target) <= 5;
+        const isOver = percentage > target + 5;
 
-            {/* Stats: Target vs Current */}
-            <div className="p-6 flex flex-col items-center gap-4">
-                <div className="flex w-full justify-between items-center px-2">
-                    <div className="flex flex-col items-center">
-                        <span className="text-xs uppercase tracking-wider opacity-60 font-semibold mb-1">Target</span>
-                        <span className="text-xl font-medium opacity-80">{target}%</span>
-                    </div>
-                    <div className="w-px h-10 bg-[var(--border-color)] opacity-50"></div>
-                    <div className="flex flex-col items-center">
-                        <span className="text-xs uppercase tracking-wider opacity-60 font-semibold mb-1">Current</span>
-                        <span className="text-3xl font-bold" style={{ color }}>{safeRound(current)}%</span>
-                    </div>
-                </div>
-
-                {/* Progress Bar visual context */}
-                <div className="w-full h-1.5 bg-black/10 dark:bg-white/10 rounded-full overflow-hidden mt-2">
-                    <div
-                        className="h-full rounded-full transition-all duration-1000"
-                        style={{ width: `${Math.min(current, 100)}%`, backgroundColor: color }}
+        return (
+            <div className="radial-progress-container" style={{ width: size, height: size }}>
+                <svg width={size} height={size} className="radial-progress-svg">
+                    {/* Background circle */}
+                    <circle
+                        cx={size / 2}
+                        cy={size / 2}
+                        r={radius}
+                        fill="none"
+                        stroke="rgba(255, 255, 255, 0.1)"
+                        strokeWidth="10"
                     />
+                    {/* Progress circle */}
+                    <circle
+                        cx={size / 2}
+                        cy={size / 2}
+                        r={radius}
+                        fill="none"
+                        stroke={color}
+                        strokeWidth="10"
+                        strokeLinecap="round"
+                        strokeDasharray={circumference}
+                        strokeDashoffset={offset}
+                        transform={`rotate(-90 ${size / 2} ${size / 2})`}
+                        style={{ transition: 'stroke-dashoffset 1s ease-out' }}
+                    />
+                </svg>
+                <div className="radial-progress-content">
+                    <div className="radial-progress-percentage" style={{ color }}>
+                        {safeRound(percentage)}%
+                    </div>
+                    <div className="radial-progress-label">
+                        vs {target}%
+                    </div>
+                    {isOnTrack && <div className="radial-progress-status">✓</div>}
+                    {isOver && <div className="radial-progress-status warning">⚠</div>}
                 </div>
             </div>
+        );
+    };
 
-            {/* Top Contributors List */}
-            <div className="p-5 pt-0 flex-grow">
-                <p className="text-xs text-center uppercase tracking-wider opacity-50 font-semibold mb-4">Top Contributors</p>
-                <div className="space-y-3">
-                    {items.length > 0 ? (
-                        items.map(item => (
-                            <div key={item.categoryId} className="flex justify-between items-center text-sm">
-                                <span className="flex items-center gap-2 truncate opacity-90 min-w-0">
-                                    <span className="opacity-70 shrink-0">{item.categoryIcon}</span>
-                                    <span className="truncate">{item.categoryName}</span>
-                                </span>
-                                <span className="font-mono font-medium opacity-75 shrink-0">{safeRound(item.percentage)}%</span>
-                            </div>
-                        ))
-                    ) : (
-                        <div className="text-sm opacity-40 text-center italic py-4">No data</div>
-                    )}
+    // Horizontal Category Card with Expandable Contributors
+    const CategoryCard = ({
+        title,
+        target,
+        current,
+        items,
+        color,
+        icon
+    }: {
+        title: string,
+        target: number,
+        current: number,
+        items: typeof topCategories.needs,
+        color: string,
+        icon: string
+    }) => {
+        const [isExpanded, setIsExpanded] = useState(false);
+        const isOnTrack = Math.abs(current - target) <= 5;
+        const isOver = current > target + 5;
+        const isUnder = current < target - 5;
+
+        let statusText = 'On Track';
+        let statusColor = '#10b981'; // green
+
+        if (isOver) {
+            // Special case for Savings - being over is good!
+            statusText = title === 'Savings' ? 'Budget Surplus' : 'Over Budget';
+            statusColor = title === 'Savings' ? '#10b981' : '#f59e0b'; // green for savings, amber for others
+        } else if (isUnder) {
+            statusText = 'Under Budget';
+            statusColor = '#3b82f6'; // blue
+        }
+
+        return (
+            <div className="financial-journey-card">
+                <div className="financial-journey-card-header">
+                    <div className="financial-journey-card-icon" style={{ backgroundColor: `${color}20` }}>
+                        <span style={{ fontSize: '2rem' }}>{icon}</span>
+                    </div>
+                    <div className="financial-journey-card-title">
+                        <h3>{title}</h3>
+                        <span className="financial-journey-card-status" style={{ color: statusColor }}>
+                            {statusText}
+                        </span>
+                    </div>
                 </div>
+
+                <div className="financial-journey-card-body">
+                    <div className="financial-journey-progress-section">
+                        <RadialProgress
+                            percentage={current}
+                            target={target}
+                            color={color}
+                            size={140}
+                        />
+                    </div>
+
+                    <div className="financial-journey-details-section">
+                        <div className="financial-journey-stats">
+                            <div className="financial-journey-stat">
+                                <span className="stat-label">Target</span>
+                                <span className="stat-value">{target}%</span>
+                            </div>
+                            <div className="financial-journey-stat">
+                                <span className="stat-label">Current</span>
+                                <span className="stat-value" style={{ color }}>{safeRound(current)}%</span>
+                            </div>
+                            <div className="financial-journey-stat">
+                                <span className="stat-label">Difference</span>
+                                <span className="stat-value" style={{
+                                    color: current > target ? '#f59e0b' : '#10b981'
+                                }}>
+                                    {current > target ? '+' : ''}{safeRound(current - target)}pp
+                                </span>
+                            </div>
+                        </div>
+
+                        {items.length > 0 && (
+                            <button
+                                className="financial-journey-expand-btn"
+                                onClick={() => setIsExpanded(!isExpanded)}
+                            >
+                                <span>Top Contributors</span>
+                                {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                            </button>
+                        )}
+                    </div>
+                </div>
+
+                {isExpanded && items.length > 0 && (
+                    <div className="financial-journey-contributors">
+                        {items.map(item => (
+                            <div key={item.categoryId} className="financial-journey-contributor-item">
+                                <span className="contributor-name">
+                                    <span className="contributor-icon">{item.categoryIcon}</span>
+                                    {item.categoryName}
+                                </span>
+                                <span className="contributor-percentage" style={{ color }}>
+                                    {safeRound(item.percentage)}%
+                                </span>
+                            </div>
+                        ))}
+                    </div>
+                )}
             </div>
-        </div>
-    );
+        );
+    };
 
     return (
         <div className="card financial-journey-card mt-8 p-0 border-none shadow-none bg-transparent">
@@ -136,31 +241,31 @@ const FinancialJourney: React.FC<FinancialJourneyProps> = ({ data, expenses, cat
                 </div>
             </div>
 
-            {/* 3-Column Grid - FORCED 3 COLUMNS */}
-            <div className="grid grid-cols-3 gap-6" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)' }}>
-                <CategoryColumn
+            {/* Horizontal Cards - Stacked Vertically */}
+            <div className="financial-journey-cards-container">
+                <CategoryCard
                     title="Needs"
                     target={50}
                     current={stats.needsPercentage}
                     items={topCategories.needs}
-                    color="#0ea5e9" // Sky blue 
-                    bgClass="bg-[var(--color-bg-secondary)]"
+                    color="#3b82f6" // Blue
+                    icon="🏠"
                 />
-                <CategoryColumn
+                <CategoryCard
                     title="Wants"
                     target={30}
                     current={stats.wantsPercentage}
                     items={topCategories.wants}
-                    color="#8b5cf6" // Violet
-                    bgClass="bg-[var(--color-bg-secondary)]"
+                    color="#8b5cf6" // Purple
+                    icon="🎯"
                 />
-                <CategoryColumn
+                <CategoryCard
                     title="Savings"
                     target={20}
                     current={stats.savingsPercentage}
                     items={topCategories.savings}
-                    color="#10b981" // Emerald
-                    bgClass="bg-[var(--color-bg-secondary)]"
+                    color="#10b981" // Green
+                    icon="💰"
                 />
             </div>
         </div>

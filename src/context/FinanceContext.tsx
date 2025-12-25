@@ -298,7 +298,21 @@ export const FinanceProvider: React.FC<FinanceProviderProps> = ({ children }) =>
             alert('Invalid data file. Missing required fields.');
             return;
         }
-        setData(newData);
+
+        // Merge with defaults to ensure backward compatibility with old backups
+        // that might be missing new fields like isOnboarded
+        const mergedData: FinancialData = {
+            incomes: newData.incomes,
+            expenses: newData.expenses,
+            customCategories: newData.customCategories,
+            currentMonth: newData.currentMonth || getCurrentMonth(),
+            currency: newData.currency || 'USD',
+            // If isOnboarded is not in the backup, default to true 
+            // (since they have data, they must have been onboarded)
+            isOnboarded: newData.isOnboarded !== undefined ? newData.isOnboarded : true
+        };
+
+        setData(mergedData);
     };
 
     const value: FinanceContextType = {

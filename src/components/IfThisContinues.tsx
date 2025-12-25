@@ -2,10 +2,11 @@ import React, { useMemo } from 'react';
 import { useFinance } from '../context/FinanceContext';
 import { calculateProjections, getAnalysisMonths } from '../utils/projections';
 import { formatCurrency } from '../utils/calculations';
+import { TrendingUp, DollarSign, PiggyBank, ArrowUp, ArrowDown } from 'lucide-react';
+import './Dashboard.css';
 
 const IfThisContinues: React.FC = () => {
     const { monthlyTrends, data } = useFinance();
-    const [activeTab, setActiveTab] = React.useState<'projections' | 'buys'>('projections');
 
     const projection = useMemo(() => {
         const analysisMonths = getAnalysisMonths(monthlyTrends, data.currentMonth);
@@ -18,7 +19,7 @@ const IfThisContinues: React.FC = () => {
 
     const formattedYearly = formatCurrency(Math.abs(projection.yearlyProjection), data.currency, { maximumFractionDigits: 0 });
     const headline = projection.headline.replace('##AMOUNT##', formattedYearly);
-    const outcomeLabel = projection.yearlyProjection >= 0 ? 'total savings' : 'spending exceeding income';
+    const isPositive = projection.yearlyProjection >= 0;
 
     const formatDuration = (value: number) => {
         if (value > 18) {
@@ -34,106 +35,137 @@ const IfThisContinues: React.FC = () => {
         };
     };
 
-    const renderTimeBar = (label: string, value: number, max: number, icon: string) => {
-        const percentage = Math.min((value / max) * 100, 100);
-        const { value: displayValue, unit } = formatDuration(value);
-
-        return (
-            <div className="time-metric-item">
-                <div className="flex justify-between items-center mb-1 text-sm">
-                    <span className="flex items-center gap-2">
-                        <span>{icon}</span> {label}
-                    </span>
-                    <span className="font-semibold">{displayValue} {unit}</span>
-                </div>
-                <div className="time-bar-bg h-1.5 bg-black/10 dark:bg-white/10 rounded-full overflow-hidden">
-                    <div
-                        className="time-bar-fill h-full bg-primary transition-all duration-1000"
-                        style={{ width: `${percentage}%` }}
-                    />
-                </div>
-            </div>
-        );
-    };
-
     return (
-        <div className="projection-component border-l-4 border-l-primary pl-4">
-            <div className="chart-tabs mb-6">
-                <button
-                    className={`tab-btn ${activeTab === 'projections' ? 'active' : ''}`}
-                    onClick={() => setActiveTab('projections')}
-                >
-                    🔮 If This Continues...
-                </button>
-                <button
-                    className={`tab-btn ${activeTab === 'buys' ? 'active' : ''}`}
-                    onClick={() => setActiveTab('buys')}
-                >
-                    🛍️ What This Buys You
-                </button>
+        <div className="projections-unified">
+            <div className="projections-header">
+                <h3>
+                    <span className="projection-icon">🔮</span>
+                    12-Month Forecast
+                </h3>
             </div>
 
-            <div className="projection-content tab-content animate-fade-in">
-                {activeTab === 'projections' ? (
-                    <>
-                        <p className="projection-headline text-lg font-semibold mb-4 text-primary">
-                            {headline}
-                        </p>
-
-                        <p className="text-muted text-sm mb-6 leading-relaxed">
+            <div className="projections-layout">
+                {/* LEFT SIDE: Forecast */}
+                <div className="projection-forecast">
+                    <div className="forecast-headline">
+                        <div className={`forecast-badge ${isPositive ? 'forecast-positive' : 'forecast-negative'}`}>
+                            {isPositive ? <ArrowUp size={20} /> : <ArrowDown size={20} />}
+                            <span>{isPositive ? 'Savings Growth' : 'Spending Deficit'}</span>
+                        </div>
+                        <h4 className="forecast-amount">{headline}</h4>
+                        <p className="forecast-description">
                             Based on your behavior from the last {projection.monthsAnalyzed} completed months,
-                            your 12-month {outcomeLabel} is projected to be <strong>{formattedYearly}</strong>.
+                            your 12-month {isPositive ? 'total savings' : 'spending exceeding income'} is projected to be <strong>{formattedYearly}</strong>.
                         </p>
+                    </div>
 
-                        <div className="projection-stats-grid">
-                            <div className="projection-stat-item">
+                    <div className="forecast-stats">
+                        <div className="forecast-stat-card">
+                            <div className="stat-icon" style={{ backgroundColor: 'rgba(16, 185, 129, 0.1)', color: '#10b981' }}>
+                                <DollarSign size={24} />
+                            </div>
+                            <div className="stat-content">
                                 <span className="stat-label">Avg. Monthly Income</span>
                                 <span className="stat-value">{formatCurrency(projection.averageIncome, data.currency, { maximumFractionDigits: 0 })}</span>
                             </div>
-                            <div className="projection-stat-item">
+                        </div>
+
+                        <div className="forecast-stat-card">
+                            <div className="stat-icon" style={{ backgroundColor: 'rgba(239, 68, 68, 0.1)', color: '#ef4444' }}>
+                                <TrendingUp size={24} />
+                            </div>
+                            <div className="stat-content">
                                 <span className="stat-label">Avg. Monthly Expenses</span>
                                 <span className="stat-value">{formatCurrency(projection.averageExpenses, data.currency, { maximumFractionDigits: 0 })}</span>
                             </div>
-                            <div className="projection-stat-item">
+                        </div>
+
+                        <div className="forecast-stat-card">
+                            <div className="stat-icon" style={{
+                                backgroundColor: projection.averageSavings >= 0 ? 'rgba(59, 130, 246, 0.1)' : 'rgba(245, 158, 11, 0.1)',
+                                color: projection.averageSavings >= 0 ? '#3b82f6' : '#f59e0b'
+                            }}>
+                                <PiggyBank size={24} />
+                            </div>
+                            <div className="stat-content">
                                 <span className="stat-label">Avg. Monthly Savings</span>
-                                <span className="stat-value" style={{ color: projection.averageSavings >= 0 ? 'var(--color-success)' : 'var(--color-error)' }}>
+                                <span className="stat-value" style={{
+                                    color: projection.averageSavings >= 0 ? 'var(--color-success)' : 'var(--color-error)'
+                                }}>
                                     {formatCurrency(projection.averageSavings, data.currency, { maximumFractionDigits: 0 })}
                                 </span>
                             </div>
                         </div>
-                    </>
-                ) : (
-                    <div className="what-this-buys">
-                        <div className="mb-6">
-                            <p className="text-xs text-muted leading-tight">
-                                Your projected savings can cover <strong>one</strong> of these milestones at a time:
-                            </p>
+                    </div>
+                </div>
+
+                {/* RIGHT SIDE: What This Covers */}
+                <div className="projection-coverage">
+                    <div className="coverage-header">
+                        <h4>What This Covers</h4>
+                        <p>Your projected savings can cover <strong>one</strong> of these milestones:</p>
+                    </div>
+
+                    <div className="coverage-items">
+                        <div className="coverage-item">
+                            <div className="coverage-info">
+                                <span className="coverage-icon">🕒</span>
+                                <span className="coverage-label">Living Expenses</span>
+                            </div>
+                            <div className="coverage-duration">
+                                {(() => {
+                                    const { value, unit } = formatDuration(projection.timeMetrics.monthsOfLivingExpenses);
+                                    return <><strong>{value}</strong> {unit}</>;
+                                })()}
+                            </div>
+                            <div className="coverage-bar">
+                                <div
+                                    className="coverage-bar-fill"
+                                    style={{
+                                        width: `${Math.min((projection.timeMetrics.monthsOfLivingExpenses / 12) * 100, 100)}%`,
+                                        backgroundColor: '#3b82f6'
+                                    }}
+                                />
+                            </div>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
-                            {renderTimeBar("Living Expenses", projection.timeMetrics.monthsOfLivingExpenses, 12, "🕒")}
-
-                            {projection.timeMetrics.topCategoriesCovered.map((cat) => (
-                                <React.Fragment key={cat.name}>
-                                    {renderTimeBar(cat.name, cat.monthsCovered, 24, cat.icon)}
-                                </React.Fragment>
-                            ))}
-
-                            <div className="time-metric-item">
-                                <div className="flex justify-between items-center text-sm">
-                                    <span className="flex items-center gap-2">
-                                        <span>🛡️</span> Emergency Buffer
-                                    </span>
-                                    <span className={`font-bold ${projection.timeMetrics.emergencyBufferStatus === 'Strong' ? 'text-success' :
-                                        projection.timeMetrics.emergencyBufferStatus === 'Healthy' ? 'text-primary' : 'text-warning'
-                                        }`}>
-                                        {projection.timeMetrics.emergencyBufferStatus}
-                                    </span>
+                        {projection.timeMetrics.topCategoriesCovered.map((cat) => {
+                            const { value, unit } = formatDuration(cat.monthsCovered);
+                            return (
+                                <div key={cat.name} className="coverage-item">
+                                    <div className="coverage-info">
+                                        <span className="coverage-icon">{cat.icon}</span>
+                                        <span className="coverage-label">{cat.name}</span>
+                                    </div>
+                                    <div className="coverage-duration">
+                                        <strong>{value}</strong> {unit}
+                                    </div>
+                                    <div className="coverage-bar">
+                                        <div
+                                            className="coverage-bar-fill"
+                                            style={{
+                                                width: `${Math.min((cat.monthsCovered / 24) * 100, 100)}%`,
+                                                backgroundColor: '#8b5cf6'
+                                            }}
+                                        />
+                                    </div>
                                 </div>
+                            );
+                        })}
+
+                        <div className="coverage-item emergency-buffer">
+                            <div className="coverage-info">
+                                <span className="coverage-icon">🛡️</span>
+                                <span className="coverage-label">Emergency Buffer</span>
+                            </div>
+                            <div className="coverage-duration">
+                                <span className={`buffer-status buffer-${projection.timeMetrics.emergencyBufferStatus.toLowerCase()}`}>
+                                    {projection.timeMetrics.emergencyBufferStatus}
+                                </span>
                             </div>
                         </div>
                     </div>
-                )}
+                </div>
             </div>
         </div>
     );
