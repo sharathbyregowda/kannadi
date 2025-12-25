@@ -1,17 +1,26 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useFinance } from '../context/FinanceContext';
-import { Settings as SettingsIcon, Check, Download, Upload } from 'lucide-react';
+import { Settings as SettingsIcon, Check, Download, Upload, RotateCcw } from 'lucide-react';
 import { CURRENCIES } from '../utils/currency';
+import CurrencySelector from './CurrencySelector';
 import './Dashboard.css';
 
 const Settings: React.FC = () => {
     const { data, setCurrency, importData } = useFinance();
+    const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
     const [selectedCurrency, setSelectedCurrency] = useState(data.currency);
 
     const handleSave = () => {
         setCurrency(selectedCurrency);
         setIsOpen(false);
+    };
+
+    const handleRestartOnboarding = () => {
+        if (window.confirm('Are you sure you want to restart the onboarding process? Your data will be preserved.')) {
+            navigate('/onboarding');
+        }
     };
 
     const handleExport = () => {
@@ -70,20 +79,29 @@ const Settings: React.FC = () => {
                 <div className="animate-fade-in">
                     <div className="form-group">
                         <label className="label">Currency</label>
-                        <select
-                            className="select"
-                            value={selectedCurrency}
-                            onChange={(e) => setSelectedCurrency(e.target.value)}
-                        >
-                            {CURRENCIES.map((currency) => (
-                                <option key={currency.code} value={currency.code}>
-                                    {currency.symbol} {currency.name} ({currency.code})
-                                </option>
-                            ))}
-                        </select>
+                        <CurrencySelector
+                            currentCurrency={selectedCurrency}
+                            onSelect={setSelectedCurrency}
+                        />
                         <p className="text-muted" style={{ fontSize: '0.75rem', marginTop: 'var(--spacing-xs)' }}>
                             Choose your preferred currency for displaying amounts
                         </p>
+                    </div>
+
+                    <div className="form-group" style={{ marginTop: 'var(--spacing-lg)', paddingTop: 'var(--spacing-lg)', borderTop: '1px solid var(--border-color)' }}>
+                        <label className="label">Onboarding</label>
+                        <div style={{ marginTop: 'var(--spacing-sm)' }}>
+                            <button
+                                className="btn btn-secondary"
+                                onClick={handleRestartOnboarding}
+                            >
+                                <RotateCcw size={16} />
+                                Restart Onboarding
+                            </button>
+                            <p className="text-muted" style={{ fontSize: '0.75rem', marginTop: 'var(--spacing-xs)' }}>
+                                Go through the setup process again.
+                            </p>
+                        </div>
                     </div>
 
                     <div className="form-group" style={{ marginTop: 'var(--spacing-lg)', paddingTop: 'var(--spacing-lg)', borderTop: '1px solid var(--border-color)' }}>

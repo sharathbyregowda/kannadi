@@ -40,6 +40,7 @@ interface FinanceContextType {
     // Utility methods
     setCurrentMonth: (month: string) => void;
     setCurrency: (currency: string) => void;
+    completeOnboarding: () => void;
     clearAllData: () => void;
     importData: (data: FinancialData) => void;
 }
@@ -64,7 +65,13 @@ export const FinanceProvider: React.FC<FinanceProviderProps> = ({ children }) =>
         const savedData = loadFinancialData();
 
         if (savedData) {
-            return migrateData(savedData);
+            // If data exists but isOnboarded is undefined, assume true for existing users
+            // unless it's a completely empty state which shouldn't happen with savedData
+            const migrated = migrateData(savedData);
+            return {
+                ...migrated,
+                isOnboarded: migrated.isOnboarded ?? true
+            };
         }
 
         // Initial empty state
@@ -74,6 +81,7 @@ export const FinanceProvider: React.FC<FinanceProviderProps> = ({ children }) =>
             customCategories: DEFAULT_CATEGORIES,
             currentMonth: getCurrentMonth(),
             currency: 'USD',
+            isOnboarded: false, // New users start as not onboarded
             version: CURRENT_DATA_VERSION,
         };
     });
@@ -270,6 +278,10 @@ export const FinanceProvider: React.FC<FinanceProviderProps> = ({ children }) =>
         setData((prev) => ({ ...prev, currency }));
     };
 
+    const completeOnboarding = () => {
+        setData((prev) => ({ ...prev, isOnboarded: true }));
+    };
+
     const clearAllData = () => {
         setData({
             incomes: [],
@@ -307,6 +319,7 @@ export const FinanceProvider: React.FC<FinanceProviderProps> = ({ children }) =>
         getCategoryHierarchy,
         setCurrentMonth,
         setCurrency,
+        completeOnboarding,
         clearAllData,
         importData,
     };

@@ -78,6 +78,7 @@ export interface FinancialData {
   customCategories: CustomCategory[];
   currentMonth: string; // Format: YYYY-MM
   currency: string; // Currency code (USD, EUR, GBP, INR, etc.)
+  isOnboarded?: boolean; // Track if user has completed onboarding
   version?: number; // Data schema version for migrations
 }
 
