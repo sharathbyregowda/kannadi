@@ -117,7 +117,6 @@ const FinancialJourney: React.FC<FinancialJourneyProps> = ({ data, expenses, cat
         icon: string
     }) => {
         const [isExpanded, setIsExpanded] = useState(false);
-        const isOnTrack = Math.abs(current - target) <= 5;
         const isOver = current > target + 5;
         const isUnder = current < target - 5;
 

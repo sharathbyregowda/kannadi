@@ -2,19 +2,12 @@ import React, { useMemo } from 'react';
 import { useFinance } from '../context/FinanceContext';
 import { generateMonthlySummary } from '../utils/summary';
 import { calculateMonthlyTrends, formatMonth } from '../utils/calculations';
-import { TrendingUp, AlertTriangle, DollarSign, PiggyBank, Target, Info } from 'lucide-react';
+import { AlertTriangle, DollarSign, PiggyBank, Info } from 'lucide-react';
 import './Dashboard.css';
 
 // Insight type classification based on content
 type InsightType = 'positive' | 'warning' | 'info';
-type InsightCategory = 'spending' | 'savings' | 'alert';
-
-interface InsightCard {
-    text: string;
-    type: InsightType;
-    category: InsightCategory;
-    icon: React.ReactNode;
-}
+type InsightCategory = 'spending' | 'savings' | 'alert' | 'info';
 
 const classifyInsight = (text: string): { type: InsightType; category: InsightCategory; icon: React.ReactNode } => {
     const lower = text.toLowerCase();
