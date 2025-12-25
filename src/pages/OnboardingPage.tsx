@@ -13,9 +13,6 @@ const OnboardingPage: React.FC = () => {
     const navigate = useNavigate();
     const [step, setStep] = useState(1);
 
-    // We already have data in context, but for onboarding we want to guide the user
-    // The components (CategoryManager, IncomeForm, etc.) use the context directly which is fine.
-
     const handleNext = () => {
         setStep(prev => prev + 1);
         window.scrollTo(0, 0);
@@ -32,28 +29,40 @@ const OnboardingPage: React.FC = () => {
     };
 
     const renderStep1 = () => (
-        <div className="space-y-6 animate-fade-in">
-            <div className="text-center space-y-4 mb-8">
-                <h1 className="text-3xl font-bold">Review your money. Don’t guess.</h1>
-                <div className="prose mx-auto text-left" style={{ maxWidth: '600px' }}>
-                    <p>Every month, money leaves your account whether you pay attention or not.</p>
-                    <p>Bank statements already tell the truth. This app helps you review that truth calmly, once a month, so you know:</p>
-                    <ul className="list-disc pl-5">
-                        <li>where your money actually goes</li>
-                        <li>what matters</li>
-                        <li>what doesn’t</li>
-                    </ul>
-                    <p>You’ll enter income and expenses manually. That is intentional.</p>
-                    <p>Reviewing each transaction forces clarity. Clarity changes behaviour.</p>
-                    <p className="font-semibold">This takes 10–20 minutes a month. Skipping it costs far more.</p>
+        <div className="space-y-8 animate-fade-in max-w-3xl mx-auto">
+            <div className="text-center space-y-6">
+                <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-transparent">
+                    Review your money.<br />Don’t guess.
+                </h1>
+                <div className="prose mx-auto text-lg text-gray-300 leading-relaxed" style={{ maxWidth: '600px' }}>
+                    <p className="mb-4">Every month, money leaves your account whether you pay attention or not. Bank statements tell the truth, but they are hard to read.</p>
+                    <p className="mb-6">This app helps you review that truth calmly, once a month, so you know:</p>
+
+                    <div className="flex flex-col gap-3 mb-8 items-center text-left">
+                        <div className="flex items-center gap-3 bg-gray-800/50 p-3 rounded-lg border border-gray-700 w-full md:w-auto md:min-w-[300px]">
+                            <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400">1</div>
+                            <span>Where your money actually goes</span>
+                        </div>
+                        <div className="flex items-center gap-3 bg-gray-800/50 p-3 rounded-lg border border-gray-700 w-full md:w-auto md:min-w-[300px]">
+                            <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400">2</div>
+                            <span>What matters to you</span>
+                        </div>
+                        <div className="flex items-center gap-3 bg-gray-800/50 p-3 rounded-lg border border-gray-700 w-full md:w-auto md:min-w-[300px]">
+                            <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center text-green-400">3</div>
+                            <span>What you can cut out</span>
+                        </div>
+                    </div>
+
+                    <p className="text-sm text-gray-400 border-l-2 border-blue-500 pl-4 italic">
+                        "You’ll enter income and expenses manually. That is intentional. Reviewing each transaction forces clarity. Clarity changes behaviour."
+                    </p>
                 </div>
             </div>
 
-            <div className="card p-6">
-                <h2 className="text-xl font-bold mb-4">Choose your Currency</h2>
-                <p className="mb-4 text-muted">
-                    Choose the currency you use for everyday spending.
-                    You can change this later, but all existing data will stay in the original currency.
+            <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-8 shadow-xl">
+                <h2 className="text-xl font-bold mb-2 text-white">Choose your Currency</h2>
+                <p className="mb-6 text-gray-400 text-sm">
+                    Select the currency for your main accounts.
                 </p>
                 <CurrencySelector
                     currentCurrency={data.currency}
@@ -61,36 +70,39 @@ const OnboardingPage: React.FC = () => {
                 />
             </div>
 
-            <div className="flex justify-end">
-                <button className="btn btn-primary" onClick={handleNext}>
-                    Next: Review Categories <ArrowRight size={16} className="ml-2" />
+            <div className="flex justify-center pt-4">
+                <button className="btn btn-primary btn-lg px-8 py-4 text-lg shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30 transition-all" onClick={handleNext}>
+                    Get Started <ArrowRight size={20} className="ml-2" />
                 </button>
             </div>
         </div>
     );
 
     const renderStep2 = () => (
-        <div className="space-y-6 animate-fade-in">
+        <div className="space-y-6 animate-fade-in max-w-5xl mx-auto">
             <div className="text-center mb-8">
-                <h2 className="text-2xl font-bold">Step 2: Review Categories</h2>
-                <p className="text-muted">Income, Needs, Wants, Savings</p>
+                <h2 className="text-3xl font-bold mb-2 text-white">Review Categories</h2>
+                <p className="text-gray-400">Income, Needs, Wants, Savings</p>
             </div>
 
             <div className="grid md:grid-cols-3 gap-6">
                 <div className="md:col-span-1 space-y-4">
-                    <div className="card p-4 bg-primary-light border-primary">
-                        <h3 className="font-bold mb-2">Why this matters</h3>
-                        <p className="text-sm">Categories decide how your spending is interpreted. Wrong categories lead to wrong conclusions.</p>
-                        <hr className="my-3 border-primary-dark opacity-20" />
-                        <p className="text-sm">We’ve added sensible defaults. You can customise them now or later.</p>
+                    <div className="bg-blue-900/20 border border-blue-800/50 rounded-xl p-5">
+                        <h3 className="font-bold mb-2 text-blue-300">Why this matters</h3>
+                        <p className="text-sm text-gray-300 leading-relaxed">Categories decide how your spending is interpreted. Wrong categories lead to wrong conclusions.</p>
+                        <hr className="my-4 border-blue-800/30" />
+                        <p className="text-xs text-blue-200">We’ve added sensible defaults. You can customise them now or later.</p>
                     </div>
                 </div>
 
                 <div className="md:col-span-2">
-                    <div className="card p-6 mb-6">
-                        <h3 className="font-bold mb-4">Review the default categories for:</h3>
-                        <p className="mb-4">Change names, add new ones, or keep them as-is.</p>
-                        {/* We reuse CategoryManager but might need to tweak its styling or accept props to fit better */}
+                    <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6 shadow-lg">
+                        <div className="flex justify-between items-center mb-6">
+                            <div>
+                                <h3 className="font-bold text-lg text-white">Default Categories</h3>
+                                <p className="text-sm text-gray-400">Click to edit or add new ones</p>
+                            </div>
+                        </div>
                         <div className="category-manager-wrapper">
                             <CategoryManager />
                         </div>
@@ -98,12 +110,12 @@ const OnboardingPage: React.FC = () => {
                 </div>
             </div>
 
-            <div className="flex justify-between">
+            <div className="flex justify-between items-center pt-6 border-t border-gray-800">
                 <button className="btn btn-secondary" onClick={handleBack}>
                     <ArrowLeft size={16} className="mr-2" /> Back
                 </button>
                 <div className="flex items-center gap-4">
-                    <span className="text-muted text-sm hidden md:inline">Skip for now. You can edit categories anytime from Settings.</span>
+                    <span className="text-gray-500 text-sm hidden md:inline">You can edit these anytime later.</span>
                     <button className="btn btn-primary" onClick={handleNext}>
                         Next: Add Income <ArrowRight size={16} className="ml-2" />
                     </button>
@@ -113,39 +125,40 @@ const OnboardingPage: React.FC = () => {
     );
 
     const renderStep3 = () => (
-        <div className="space-y-6 animate-fade-in">
+        <div className="space-y-6 animate-fade-in max-w-5xl mx-auto">
             <div className="text-center mb-8">
-                <h2 className="text-2xl font-bold">Step 3: Add Income</h2>
+                <h2 className="text-3xl font-bold mb-2 text-white">Add Income</h2>
+                <p className="text-gray-400">Where does your money come from?</p>
             </div>
 
             <div className="grid md:grid-cols-3 gap-6">
                 <div className="md:col-span-1 space-y-4">
-                    <div className="card p-4">
-                        <h3 className="font-bold mb-2">Why this matters</h3>
-                        <p className="text-sm">Everything else depends on income. No income means no context.</p>
+                    <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-5 sticky top-4">
+                        <h3 className="font-bold mb-2 text-gray-200">Why this matters</h3>
+                        <p className="text-sm text-gray-400 leading-relaxed">Everything else depends on income. No income means no context for your spending.</p>
                     </div>
                 </div>
 
-                <div className="md:col-span-2">
-                    <div className="card p-6 mb-4">
-                        <p className="mb-6">
+                <div className="md:col-span-2 space-y-6">
+                    <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6 shadow-lg">
+                        <p className="mb-6 text-gray-300">
                             Start by adding your income for the month. Use your bank statement or payslip.
                             <br />
-                            <span className="text-muted text-sm">One entry per income source is enough.</span>
+                            <span className="text-gray-500 text-sm">One entry per income source is usually enough.</span>
                         </p>
                         <IncomeForm />
                     </div>
 
-                    {/* Show added income items here could be nice, but IncomeForm doesn't show list.
-                        We can maybe access data.incomes to show a preview? */}
                     {data.incomes.length > 0 && (
-                        <div className="card p-4 bg-green-50 border-green-200">
-                            <h4 className="font-bold text-green-800 mb-2">Added Income ({data.incomes.length})</h4>
-                            <ul className="space-y-1">
+                        <div className="bg-green-900/10 border border-green-800/30 rounded-xl p-5">
+                            <h4 className="font-bold text-green-400 mb-3 flex items-center gap-2">
+                                <Check size={16} /> Added Income ({data.incomes.length})
+                            </h4>
+                            <ul className="space-y-2">
                                 {data.incomes.map(inc => (
-                                    <li key={inc.id} className="flex justify-between text-sm">
+                                    <li key={inc.id} className="flex justify-between text-sm bg-green-900/20 p-2 rounded text-gray-300">
                                         <span>{inc.source}</span>
-                                        <span className="font-mono">{inc.amount}</span>
+                                        <span className="font-mono font-bold text-green-300">{inc.amount}</span>
                                     </li>
                                 ))}
                             </ul>
@@ -154,7 +167,7 @@ const OnboardingPage: React.FC = () => {
                 </div>
             </div>
 
-            <div className="flex justify-between">
+            <div className="flex justify-between items-center pt-6 border-t border-gray-800">
                 <button className="btn btn-secondary" onClick={handleBack}>
                     <ArrowLeft size={16} className="mr-2" /> Back
                 </button>
@@ -166,39 +179,43 @@ const OnboardingPage: React.FC = () => {
     );
 
     const renderStep4 = () => (
-        <div className="space-y-6 animate-fade-in">
+        <div className="space-y-6 animate-fade-in max-w-5xl mx-auto">
             <div className="text-center mb-8">
-                <h2 className="text-2xl font-bold">Step 4: Add Expenses</h2>
+                <h2 className="text-3xl font-bold mb-2 text-white">Add Expenses</h2>
+                <p className="text-gray-400">The core habit.</p>
             </div>
 
             <div className="grid md:grid-cols-3 gap-6">
                 <div className="md:col-span-1 space-y-4">
-                    <div className="card p-4 sticky top-4">
-                        <h3 className="font-bold mb-2">Why this matters</h3>
-                        <p className="text-sm mb-4">Total Expenses: <span className="font-mono font-bold">{data.expenses.reduce((sum, e) => sum + e.amount, 0)}</span></p>
-                        <p className="text-sm mb-2">Reading your bank statement line by line forces you to notice:</p>
-                        <ul className="list-disc pl-4 text-sm mb-4">
-                            <li>repeated spending</li>
-                            <li>forgotten subscriptions</li>
-                            <li>habits you stopped questioning</li>
+                    <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-5 sticky top-4">
+                        <h3 className="font-bold mb-4 text-gray-200">Current Total</h3>
+                        <div className="text-3xl font-mono font-bold text-white mb-6">
+                            {data.expenses.reduce((sum, e) => sum + e.amount, 0).toLocaleString(undefined, { minimumFractionDigits: 0 })}
+                            <span className="text-sm font-normal text-gray-500 ml-2">{data.currency}</span>
+                        </div>
+
+                        <h4 className="font-bold mb-2 text-sm text-gray-400 uppercase tracking-wider">What to look for</h4>
+                        <ul className="space-y-2 text-sm text-gray-300">
+                            <li className="flex items-start gap-2"><span className="text-red-400">•</span> Repeated spending</li>
+                            <li className="flex items-start gap-2"><span className="text-red-400">•</span> Forgotten subscriptions</li>
+                            <li className="flex items-start gap-2"><span className="text-red-400">•</span> Habits you stopped questioning</li>
                         </ul>
-                        <p className="text-sm font-semibold">That awareness is the point.</p>
                     </div>
                 </div>
 
                 <div className="md:col-span-2">
-                    <div className="card p-6 mb-6">
-                        <p className="mb-6">
-                            Now add your expenses. Use your bank statement and enter transactions as they appear.
+                    <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6 shadow-lg">
+                        <p className="mb-6 text-gray-300">
+                            Use your bank statement. Enter transactions one by one.
                             <br />
-                            <span className="text-muted text-sm">Be honest. Precision matters more than speed.</span>
+                            <span className="text-gray-500 text-sm">Precision matters more than speed. Be honest with yourself.</span>
                         </p>
                         <ExpenseLedger />
                     </div>
                 </div>
             </div>
 
-            <div className="flex justify-between">
+            <div className="flex justify-between items-center pt-6 border-t border-gray-800">
                 <button className="btn btn-secondary" onClick={handleBack}>
                     <ArrowLeft size={16} className="mr-2" /> Back
                 </button>
@@ -210,39 +227,43 @@ const OnboardingPage: React.FC = () => {
     );
 
     const renderStep5 = () => (
-        <div className="space-y-6 animate-fade-in text-center max-w-2xl mx-auto">
+        <div className="space-y-8 animate-fade-in text-center max-w-2xl mx-auto pt-10">
             <div className="mb-8">
-                <div className="w-16 h-16 bg-success rounded-full flex items-center justify-center mx-auto mb-4 text-white">
-                    <Check size={32} />
+                <div className="w-20 h-20 bg-gradient-to-br from-green-400 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6 text-white shadow-lg shadow-green-500/30">
+                    <Check size={40} strokeWidth={3} />
                 </div>
-                <h2 className="text-3xl font-bold mb-2">Step 5: See Your Data Come Alive</h2>
-                <p className="text-muted">Numbers only matter when patterns appear.</p>
+                <h2 className="text-4xl font-extrabold mb-4 text-white">All Set!</h2>
+                <p className="text-xl text-gray-300">Your financial data is starting to tell a story.</p>
             </div>
 
-            <div className="card p-8 mb-8">
-                <p className="text-lg mb-4">
-                    As you add data, dashboards and summaries update automatically.
+            <div className="bg-gray-800/50 border border-gray-700 rounded-2xl p-8 shadow-xl">
+                <p className="text-lg mb-6 text-gray-300">
+                    As you add more data, your dashboards and reports will update automatically to reveal patterns.
                 </p>
-                <p className="mb-4">
-                    You don’t need to analyse charts deeply.
-                    <br />
-                    <strong>Read the summaries. React. Adjust next month.</strong>
-                </p>
+                <div className="bg-gray-900/50 p-4 rounded-lg border border-gray-800 text-sm text-gray-400">
+                    <strong>Tip:</strong> You don’t need to analyse charts deeply yet. Just read the summaries, react to what you feel, and adjust next month.
+                </div>
             </div>
 
-            <button className="btn btn-primary btn-lg w-full" onClick={handleFinish}>
-                View Dashboard <ArrowRight size={20} className="ml-2" />
+            <button className="btn btn-primary btn-lg w-full py-4 text-lg font-bold shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30 transition-all" onClick={handleFinish}>
+                Go to Dashboard <ArrowRight size={20} className="ml-2" />
             </button>
         </div>
     );
 
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col items-center py-10 px-4">
-            <div className="w-full max-w-5xl">
+        <div className="min-h-screen bg-[#0f172a] text-white flex flex-col items-center py-10 px-4 md:px-8">
+            <div className="w-full max-w-6xl">
+                {/* Header */}
+                <div className="flex justify-between items-center mb-8 px-2">
+                    <div className="text-sm font-bold text-gray-500 uppercase tracking-widest">Onboarding</div>
+                    <div className="text-sm text-gray-500">Step {step} of 5</div>
+                </div>
+
                 {/* Progress Bar */}
-                <div className="mb-8 relative h-2 bg-gray-200 rounded-full overflow-hidden">
+                <div className="mb-12 relative h-1 bg-gray-800 rounded-full overflow-hidden w-full">
                     <div
-                        className="absolute h-full bg-primary transition-all duration-500 ease-out"
+                        className="absolute h-full bg-blue-500 transition-all duration-500 ease-out shadow-[0_0_10px_rgba(59,130,246,0.5)]"
                         style={{ width: `${(step / 5) * 100}%` }}
                     />
                 </div>

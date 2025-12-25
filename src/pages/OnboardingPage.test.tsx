@@ -29,7 +29,6 @@ vi.mock('../context/FinanceContext', async () => {
             updateCategory: vi.fn(),
             deleteCategory: vi.fn(),
             getCategoryHierarchy: () => [],
-            // Mock other methods needed by child components if any
             addIncome: vi.fn(),
             addExpense: vi.fn(),
             getSubcategories: () => [],
@@ -37,7 +36,7 @@ vi.mock('../context/FinanceContext', async () => {
     };
 });
 
-// Mock child components that are complex or not focus of this test
+// Mock child components
 vi.mock('../components/CategoryManager', () => ({ default: () => <div data-testid="category-manager">Category Manager</div> }));
 vi.mock('../components/IncomeForm', () => ({ default: () => <div data-testid="income-form">Income Form</div> }));
 vi.mock('../components/ExpenseLedger', () => ({ default: () => <div data-testid="expense-ledger">Expense Ledger</div> }));
@@ -53,8 +52,8 @@ describe('OnboardingPage', () => {
                 <OnboardingPage />
             </BrowserRouter>
         );
-        expect(screen.getByText(/Review your money/i)).toBeInTheDocument();
-        expect(screen.getByText(/Choose your Currency/i)).toBeInTheDocument();
+        expect(screen.getByText(/Review your money/i)).toBeDefined();
+        expect(screen.getByText(/Choose your Currency/i)).toBeDefined();
     });
 
     it('navigates through the steps', () => {
@@ -65,20 +64,20 @@ describe('OnboardingPage', () => {
         );
 
         // Step 1 -> 2
-        fireEvent.click(screen.getByText(/Next: Review Categories/i));
-        expect(screen.getByText(/Step 2: Review Categories/i)).toBeInTheDocument();
+        fireEvent.click(screen.getByText(/Get Started/i));
+        expect(screen.getByText(/Review Categories/i)).toBeDefined();
 
         // Step 2 -> 3
         fireEvent.click(screen.getByText(/Next: Add Income/i));
-        expect(screen.getByText(/Step 3: Add Income/i)).toBeInTheDocument();
+        expect(screen.getByText(/Add Income/i)).toBeDefined();
 
         // Step 3 -> 4
         fireEvent.click(screen.getByText(/Next: Add Expenses/i));
-        expect(screen.getByText(/Step 4: Add Expenses/i)).toBeInTheDocument();
+        expect(screen.getByText(/Add Expenses/i)).toBeDefined();
 
         // Step 4 -> 5
-        fireEvent.click(screen.getByText(/Next: See Your Data/i));
-        expect(screen.getByText(/Step 5: See Your Data Come Alive/i)).toBeInTheDocument();
+        fireEvent.click(screen.getByText(/See Your Data/i));
+        expect(screen.getByText(/Step 5/i)).toBeDefined();
     });
 
     it('calls completeOnboarding when finished', () => {
@@ -89,12 +88,12 @@ describe('OnboardingPage', () => {
         );
 
         // Fast forward to last step
-        fireEvent.click(screen.getByText(/Next/i)); // 1->2
-        fireEvent.click(screen.getByText(/Next/i)); // 2->3
-        fireEvent.click(screen.getByText(/Next/i)); // 3->4
-        fireEvent.click(screen.getByText(/Next/i)); // 4->5
+        fireEvent.click(screen.getByText(/Get Started/i)); // 1->2
+        fireEvent.click(screen.getByText(/Next: Add Income/i)); // 2->3
+        fireEvent.click(screen.getByText(/Next: Add Expenses/i)); // 3->4
+        fireEvent.click(screen.getByText(/See Your Data/i)); // 4->5
 
-        fireEvent.click(screen.getByText(/View Dashboard/i));
+        fireEvent.click(screen.getByText(/Go to Dashboard/i));
         expect(mockCompleteOnboarding).toHaveBeenCalled();
     });
 });
