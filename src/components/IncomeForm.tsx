@@ -70,14 +70,20 @@ const IncomeForm: React.FC = () => {
         }
     };
 
-    const currentMonthIncomes = data.incomes.filter(
-        (income) => income.month === data.currentMonth
-    );
+    const currentMonthIncomes = data.incomes
+        .filter((income) => {
+            if (data.currentMonth.endsWith('-ALL')) {
+                const year = data.currentMonth.split('-')[0];
+                return income.month.startsWith(year);
+            }
+            return income.month === data.currentMonth;
+        })
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
     return (
         <div className="card income-form-card">
             <div className="flex justify-between items-center" style={{ marginBottom: 'var(--spacing-lg)' }}>
-                <h3>Monthly Income</h3>
+                <h3>{data.currentMonth.endsWith('-ALL') ? 'Income' : 'Monthly Income'}</h3>
                 <button className="btn btn-primary" onClick={() => setIsOpen(!isOpen)}>
                     <Plus size={18} />
                     Add Income
