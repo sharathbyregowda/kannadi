@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, PieChart, Receipt, Settings, Menu, X } from 'lucide-react';
+import { LayoutDashboard, PieChart, Receipt, Settings, Menu, X, Info } from 'lucide-react';
 import { useFinance } from '../context/FinanceContext';
 import { formatMonth } from '../utils/calculations';
 import './Dashboard.css'; // Reusing dashboard styles for now
@@ -20,6 +20,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         { to: '/reports', icon: <PieChart size={20} />, label: 'Reports' },
         { to: '/transactions', icon: <Receipt size={20} />, label: 'Transactions' },
         { to: '/settings', icon: <Settings size={20} />, label: 'Settings' },
+        { to: '/about', icon: <Info size={20} />, label: 'About' },
     ];
 
     return (

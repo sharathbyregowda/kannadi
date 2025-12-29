@@ -388,3 +388,302 @@
     color: #6b7280;
     padding: 2rem 1rem;
 }
+
+/* Skip button styling */
+.btn-ghost {
+    background-color: transparent;
+    border: 1px solid transparent;
+    color: #9ca3af;
+    transition: all 0.2s;
+}
+
+.btn-ghost:hover {
+    color: #d1d5db;
+    background-color: rgba(75, 85, 99, 0.1);
+}
+
+/* Founder's Letter / Editorial Styling */
+.founders-letter {
+    max-width: 520px;
+    margin: 0 auto;
+    position: relative;
+}
+
+/* Radial gradient spotlight background */
+.founders-letter::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.03) 0%, rgba(0, 0, 0, 0.4) 70%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.founders-letter>* {
+    position: relative;
+    z-index: 1;
+}
+
+.founders-letter-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding-bottom: 1.5rem;
+}
+
+.founders-letter-label {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 1.125rem;
+    font-style: italic;
+    font-weight: 400;
+    color: #9ca3af;
+    margin: 0;
+}
+
+.founders-letter-pullquote {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 1.375rem;
+    line-height: 1.6;
+    font-style: italic;
+    color: #1f2937;
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    padding: 2rem 2.5rem;
+    margin: 2.5rem 0;
+    border-radius: 0.75rem;
+    box-shadow: 0 0 30px rgba(251, 191, 36, 0.25);
+    text-align: center;
+}
+
+.founders-letter-body {
+    line-height: 1.9;
+}
+
+.founders-letter-opening {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 1.125rem;
+    line-height: 1.9;
+    font-style: italic;
+    color: #d1d5db;
+    margin: 0 0 2.5rem 0;
+}
+
+.founders-letter-pullquote {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 1.5rem;
+    line-height: 1.5;
+    font-weight: 400;
+    color: #1f2937;
+    background: linear-gradient(135deg, #fde68a 0%, #fcd34d 100%);
+    padding: 2rem 2.5rem;
+    margin: 2.5rem 0;
+    border-radius: 1rem;
+    box-shadow: 0 0 25px rgba(252, 211, 77, 0.35);
+    text-align: center;
+}
+
+.founders-letter-text {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 1.0625rem;
+    line-height: 1.9;
+    font-style: italic;
+    color: #d1d5db;
+    margin: 0 0 1.5rem 0;
+}
+
+.founders-letter-section-title {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 1.5rem;
+    font-weight: 400;
+    font-style: italic;
+    color: white;
+    text-align: center;
+    margin: 3rem 0 1rem 0;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.founders-letter-principles {
+    margin: 2rem 0;
+}
+
+.founders-letter-principle {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 1.0625rem;
+    line-height: 1.8;
+    font-style: italic;
+    color: #d1d5db;
+    margin: 0 0 1rem 0;
+}
+
+.principle-number {
+    font-weight: 600;
+    color: white;
+}
+
+.principle-name {
+    font-weight: 600;
+    font-style: italic;
+    color: white;
+}
+
+.highlight-text {
+    color: #22d3ee;
+    font-style: italic;
+    font-weight: 500;
+}
+
+.founders-letter-list {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 1.0625rem;
+    line-height: 1.9;
+    font-style: italic;
+    color: #d1d5db;
+    margin: 1.25rem 0 1.5rem 2rem;
+    padding-left: 0;
+}
+
+.founders-letter-separator {
+    width: 100%;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.15);
+    margin: 2.5rem 0;
+}
+
+.founders-letter-list li {
+    margin-bottom: 0.5rem;
+}
+
+.founders-letter-footnote {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    font-style: italic;
+    color: #6b7280;
+    text-align: center;
+    margin: 1rem 0 0 0;
+}
+
+.founders-letter-signoff {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    font-style: italic;
+    color: #9ca3af;
+    margin: 3rem 0 2rem 0;
+    text-align: center;
+}
+
+/* Let's go button */
+.btn-lets-go {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border: none;
+    color: white;
+    font-weight: 600;
+    font-size: 1.125rem;
+    padding: 1rem 2.5rem;
+    border-radius: 9999px;
+    box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
+    transition: all 0.3s ease;
+}
+
+.btn-lets-go:hover {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    box-shadow: 0 15px 35px rgba(16, 185, 129, 0.5);
+    transform: translateY(-2px);
+}
+
+.btn-lets-go:active {
+    transform: translateY(0);
+    box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+}
+
+/* Disclaimer Box */
+.disclaimer-box {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    margin: 3rem 0 0 0;
+}
+
+.disclaimer-title {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 1rem;
+    font-style: italic;
+    color: #fca5a5;
+    margin: 0 0 0.5rem 0;
+}
+
+.disclaimer-text {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    font-style: italic;
+    color: #d1d5db;
+    margin: 0;
+}
+
+/* GitHub Link */
+.github-link {
+    color: #60a5fa;
+    text-decoration: underline;
+    transition: color 0.2s;
+}
+
+.github-link:hover {
+    color: #93c5fd;
+}
+
+/* Tabs */
+.tabs-container {
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 2rem;
+}
+
+.tabs {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.tab {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: #9ca3af;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.tab:hover {
+    color: #d1d5db;
+    background: rgba(59, 130, 246, 0.1);
+}
+
+.tab.active {
+    color: #60a5fa;
+    border-bottom-color: #60a5fa;
+}
+
+.tab-content {
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
