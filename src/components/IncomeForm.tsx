@@ -148,7 +148,10 @@ const IncomeForm: React.FC = () => {
 
             {currentMonthIncomes.length > 0 && (
                 <div className="income-list">
-                    <h4 style={{ marginBottom: 'var(--spacing-md)', fontSize: '1rem' }}>Current Month</h4>
+                    {/* Only show "Current Month" label when in monthly view */}
+                    {!data.currentMonth.endsWith('-ALL') && (
+                        <h4 style={{ marginBottom: 'var(--spacing-md)', fontSize: '1rem' }}>Current Month</h4>
+                    )}
                     {currentMonthIncomes.map((income) => (
                         <div key={income.id} className="income-item">
                             {editingId === income.id ? (

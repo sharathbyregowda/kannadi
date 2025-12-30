@@ -40,7 +40,17 @@ const ExpenseLedger: React.FC = () => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (!amount || !categoryValue) return;
+
+        // Validate amount field with user-friendly message
+        if (!amount || amount.trim() === '') {
+            alert('Please enter an amount for the expense.');
+            if (amountInputRef.current) {
+                amountInputRef.current.focus();
+            }
+            return;
+        }
+
+        if (!categoryValue) return;
 
         const { categoryId, subcategoryId } = parseCategoryValue(categoryValue);
 
