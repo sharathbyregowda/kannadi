@@ -3,6 +3,7 @@ import { useFinance } from '../context/FinanceContext';
 import { Plus, Trash2, Edit2, Check, X, RefreshCw, CalendarDays, ToggleLeft, ToggleRight } from 'lucide-react';
 import { formatCurrency } from '../utils/calculations';
 import type { RecurringTransaction } from '../types';
+import { ExpenseCategory } from '../types';
 import './Dashboard.css';
 
 const RecurringManager: React.FC = () => {
@@ -11,6 +12,7 @@ const RecurringManager: React.FC = () => {
         addRecurringTransaction,
         updateRecurringTransaction,
         deleteRecurringTransaction,
+        getCategoryHierarchy,
     } = useFinance();
 
     const [isAddingIncome, setIsAddingIncome] = useState(false);
@@ -25,7 +27,8 @@ const RecurringManager: React.FC = () => {
     // Form state for expense
     const [expenseAmount, setExpenseAmount] = useState('');
     const [expenseDescription, setExpenseDescription] = useState('');
-    const [expenseCategoryId, setExpenseCategoryId] = useState('');
+    const [expenseCategoryValue, setExpenseCategoryValue] = useState(''); // Combined categoryId:subcategoryId
+
     const [expenseDayOfMonth, setExpenseDayOfMonth] = useState('1');
 
     // Edit form state
@@ -40,9 +43,19 @@ const RecurringManager: React.FC = () => {
     const expenseTransactions = recurringTransactions.filter(rt => rt.type === 'expense');
 
     const incomeSources = data.customCategories.filter(cat => cat.type === 'income');
-    const expenseCategories = data.customCategories.filter(
-        cat => cat.type !== 'income' && !cat.isSubcategory
-    );
+    const hierarchy = getCategoryHierarchy();
+
+    // Helper to parse the combined category value
+    const parseCategoryValue = (value: string) => {
+        if (!value) return { categoryId: '', subcategoryId: undefined };
+        const [catId, subId] = value.split(':');
+        return { categoryId: catId, subcategoryId: subId || undefined };
+    };
+
+    // Helper to create the combined category value
+    const createCategoryValue = (catId: string, subId?: string) => {
+        return subId ? `${catId}:${subId}` : catId;
+    };
 
     const handleAddIncome = (e: React.FormEvent) => {
         e.preventDefault();
@@ -65,13 +78,16 @@ const RecurringManager: React.FC = () => {
 
     const handleAddExpense = (e: React.FormEvent) => {
         e.preventDefault();
-        if (!expenseAmount || !expenseCategoryId) return;
+        if (!expenseAmount || !expenseCategoryValue) return;
+
+        const { categoryId, subcategoryId } = parseCategoryValue(expenseCategoryValue);
 
         addRecurringTransaction({
             type: 'expense',
             amount: parseFloat(expenseAmount),
             description: expenseDescription,
-            categoryId: expenseCategoryId,
+            categoryId,
+            subcategoryId,
             frequency: 'monthly',
             dayOfMonth: parseInt(expenseDayOfMonth),
             isActive: true,
@@ -79,7 +95,7 @@ const RecurringManager: React.FC = () => {
 
         setExpenseAmount('');
         setExpenseDescription('');
-        setExpenseCategoryId('');
+        setExpenseCategoryValue('');
         setExpenseDayOfMonth('1');
         setIsAddingExpense(false);
     };
@@ -110,9 +126,45 @@ const RecurringManager: React.FC = () => {
         updateRecurringTransaction(rt.id, { isActive: !rt.isActive });
     };
 
-    const getCategoryName = (categoryId: string) => {
+    const getCategoryName = (categoryId: string, subcategoryId?: string) => {
         const cat = data.customCategories.find(c => c.id === categoryId);
-        return cat ? `${cat.icon || ''} ${cat.name}` : 'Unknown';
+        const sub = subcategoryId ? data.customCategories.find(c => c.id === subcategoryId) : null;
+        if (!cat) return 'Unknown';
+        if (sub) {
+            return `${cat.icon || ''} ${cat.name} → ${sub.icon || ''} ${sub.name}`;
+        }
+        return `${cat.icon || ''} ${cat.name}`;
+    };
+
+    const renderExpenseCategoryOptions = () => {
+        return (
+            <>
+                <option value="">Select Category...</option>
+                {[ExpenseCategory.NEEDS, ExpenseCategory.WANTS, ExpenseCategory.SAVINGS].map((type) => {
+                    const typeHierarchy = hierarchy.filter((h) => h.category.type === type);
+                    const label = type === 'needs' ? 'Needs (50%)' : type === 'wants' ? 'Wants (30%)' : 'Savings (20%)';
+
+                    if (typeHierarchy.length === 0) return null;
+
+                    return (
+                        <optgroup key={type} label={label}>
+                            {typeHierarchy.map(({ category, subcategories }) => (
+                                <React.Fragment key={category.id}>
+                                    <option value={category.id}>
+                                        {category.icon} {category.name}
+                                    </option>
+                                    {subcategories.map((sub) => (
+                                        <option key={sub.id} value={`${category.id}:${sub.id}`}>
+                                            &nbsp;&nbsp;&nbsp;↳ {sub.icon} {sub.name}
+                                        </option>
+                                    ))}
+                                </React.Fragment>
+                            ))}
+                        </optgroup>
+                    );
+                })}
+            </>
+        );
     };
 
     const getDayLabel = (day: number) => {
@@ -189,7 +241,7 @@ const RecurringManager: React.FC = () => {
                                 <CalendarDays size={12} style={{ display: 'inline', marginRight: '4px' }} />
                                 {getDayLabel(rt.dayOfMonth)} of each month
                                 {!isIncome && rt.categoryId && (
-                                    <span> · {getCategoryName(rt.categoryId)}</span>
+                                    <span> · {getCategoryName(rt.categoryId, rt.subcategoryId)}</span>
                                 )}
                             </div>
                         </div>
@@ -324,14 +376,11 @@ const RecurringManager: React.FC = () => {
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--spacing-sm)', marginBottom: 'var(--spacing-sm)' }}>
                             <select
                                 className="select"
-                                value={expenseCategoryId}
-                                onChange={(e) => setExpenseCategoryId(e.target.value)}
+                                value={expenseCategoryValue}
+                                onChange={(e) => setExpenseCategoryValue(e.target.value)}
                                 required
                             >
-                                <option value="">Select Category</option>
-                                {expenseCategories.map(cat => (
-                                    <option key={cat.id} value={cat.id}>{cat.icon} {cat.name}</option>
-                                ))}
+                                {renderExpenseCategoryOptions()}
                             </select>
                             <input
                                 type="text"

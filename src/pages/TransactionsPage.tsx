@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
+import { useFinance } from '../context/FinanceContext';
 import IncomeForm from '../components/IncomeForm';
 import ExpenseLedger from '../components/ExpenseLedger';
+import ApplyRecurring from '../components/ApplyRecurring';
 import '../components/Dashboard.css';
 
 const TransactionsPage: React.FC = () => {
+    const { data } = useFinance();
     const [showIncomeForm, setShowIncomeForm] = useState(false);
+    const isYearly = data.currentMonth.endsWith('-ALL');
 
     return (
         <div className="space-y-6">
@@ -21,6 +25,9 @@ const TransactionsPage: React.FC = () => {
                     {showIncomeForm ? 'Hide Income Form' : 'Add Income'}
                 </button>
             </header>
+
+            {/* Pending Recurring Transactions Widget */}
+            {!isYearly && <ApplyRecurring month={data.currentMonth} />}
 
             <div className="transactions-grid">
                 {/* Left Column: Data Entry (Sticky on Desktop) */}

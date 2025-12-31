@@ -6,7 +6,6 @@ import YearlySummary from '../components/YearlySummary';
 import SavingsSummary from '../components/SavingsSummary';
 import IfThisContinues from '../components/IfThisContinues';
 import FinancialJourney from '../components/FinancialJourney';
-import ApplyRecurring from '../components/ApplyRecurring';
 import '../components/Dashboard.css';
 
 const DashboardPage: React.FC = () => {
@@ -21,9 +20,6 @@ const DashboardPage: React.FC = () => {
             </header>
 
             <div className="dashboard-grid">
-                {/* Pending Recurring Transactions Widget */}
-                {!isYearly && <ApplyRecurring month={data.currentMonth} />}
-
                 {/* 1. Savings Summary Cards (Top Priority as requested) */}
                 <SavingsSummary />
 

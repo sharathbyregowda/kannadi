@@ -24,6 +24,11 @@ A modern, privacy-focused personal finance tracker built to help you master the 
 ### 💼 Transaction Management
 - **Income Tracking**: Add and manage income sources with monthly/yearly filtering
 - **Expense Ledger**: Spreadsheet-like interface for rapid expense entry
+- **Recurring Transactions**: Set up monthly recurring income and expenses that auto-apply
+  - Configure day of month for each transaction
+  - Supports both categories and subcategories
+  - Pause/resume individual transactions
+  - Review pending transactions before applying
 - **Smart Filtering**: Seamlessly switch between monthly and yearly views
 - **Category Breakdown**: Visual analysis of spending by category
 
@@ -132,7 +137,7 @@ The app will be available at `https://sharathbyregowda.github.io/simple-finance/
 ## 🗺️ Roadmap
 
 - [ ] Mobile app (React Native)
-- [ ] Recurring transactions
+- [x] Recurring transactions ✅
 - [ ] Bill reminders
 - [ ] Multi-account support
 - [ ] Budget templates

@@ -361,6 +361,10 @@ export const FinanceProvider: React.FC<FinanceProviderProps> = ({ children }) =>
             if (!rt.isActive) return false;
             // Not already applied for this month
             if (rt.lastAppliedMonth === month) return false;
+            // Don't show for months before or during the transaction's creation month
+            // If created in Dec 2025, only show from Jan 2026 onwards
+            const createdMonth = rt.createdAt.substring(0, 7);
+            if (month <= createdMonth) return false;
             return true;
         });
     };

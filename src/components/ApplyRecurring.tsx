@@ -42,9 +42,14 @@ const ApplyRecurring: React.FC<ApplyRecurringProps> = ({ month }) => {
         updateRecurringTransaction(id, { lastAppliedMonth: targetMonth });
     };
 
-    const getCategoryName = (categoryId: string) => {
+    const getCategoryName = (categoryId: string, subcategoryId?: string) => {
         const cat = data.customCategories.find(c => c.id === categoryId);
-        return cat ? cat.name : 'Unknown';
+        const sub = subcategoryId ? data.customCategories.find(c => c.id === subcategoryId) : null;
+        if (!cat) return 'Unknown';
+        if (sub) {
+            return `${cat.name}/${sub.name}`;
+        }
+        return cat.name;
     };
 
     const totalIncome = pending.filter(p => p.type === 'income').reduce((sum, p) => sum + p.amount, 0);
@@ -54,6 +59,7 @@ const ApplyRecurring: React.FC<ApplyRecurringProps> = ({ month }) => {
 
     return (
         <div className="card apply-recurring" style={{
+            width: '100%',
             background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(124, 58, 237, 0.05) 100%)',
             border: '1px solid rgba(139, 92, 246, 0.3)',
         }}>
@@ -81,7 +87,7 @@ const ApplyRecurring: React.FC<ApplyRecurringProps> = ({ month }) => {
                     >
                         <div>
                             <span style={{ fontWeight: 500 }}>
-                                {rt.type === 'income' ? rt.source : (rt.description || getCategoryName(rt.categoryId!))}
+                                {rt.type === 'income' ? rt.source : (rt.description || getCategoryName(rt.categoryId!, rt.subcategoryId))}
                             </span>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)' }}>
@@ -124,7 +130,7 @@ const ApplyRecurring: React.FC<ApplyRecurringProps> = ({ month }) => {
             </div>
 
             <div className="flex gap-sm">
-                <button className="btn btn-primary" onClick={handleApplyAll} style={{ flex: 1 }}>
+                <button className="btn btn-primary" onClick={handleApplyAll}>
                     <Check size={16} />
                     Apply All
                 </button>
