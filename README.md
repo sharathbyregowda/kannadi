@@ -1,4 +1,4 @@
-# Kannadi 👁️
+# Kannadi (pronounced kuh-NAH-dee)
 
 **See your numbers.**
 
