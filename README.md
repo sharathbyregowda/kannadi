@@ -1,8 +1,10 @@
-# Simple Finance 💰
+# Kannadi 👁️
 
-A modern, privacy-focused personal finance tracker built to help you master the **50/30/20 rule** and achieve your financial goals.
+**See your numbers.**
 
-![Simple Finance Dashboard](https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&q=80&w=2000)
+Kannadi helps you see your personal finance numbers clearly. Track income, expenses, savings, and cash flow over time in one place.
+
+![Kannadi Dashboard](https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&q=80&w=2000)
 *(Replace with actual dashboard screenshot)*
 
 ## ✨ Key Features
@@ -118,7 +120,7 @@ This project is configured for **GitHub Pages**.
    npm run deploy
    ```
 
-The app will be available at `https://sharathbyregowda.github.io/simple-finance/`
+The app will be available at `https://sharathbyregowda.github.io/kannadi/`
 
 ## 📸 Screenshots
 

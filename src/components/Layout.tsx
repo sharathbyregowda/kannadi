@@ -33,9 +33,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     <div className="sidebar-header">
                         <div>
                             <h1 className="brand-title">
-                                Simple Finance
+                                Kannadi
                             </h1>
-                            <p className="brand-subtitle">Clear money reviews over time</p>
+                            <p className="brand-subtitle">See your numbers</p>
                         </div>
                         <button onClick={toggleMobileMenu} className="md:hidden text-muted hover:text-white" style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', display: 'none' /* Handled by media query via class if needed, but keeping simple for now */ }}>
                             <X size={24} />
@@ -86,7 +86,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                         >
                             <Menu size={24} />
                         </button>
-                        <span className="font-bold md:hidden mobile-brand" style={{ display: 'none' }}>Simple Finance</span>
+                        <span className="font-bold md:hidden mobile-brand" style={{ display: 'none' }}>Kannadi</span>
                     </div>
 
                     {/* Desktop/Global Actions */}

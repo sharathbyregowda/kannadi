@@ -54,7 +54,7 @@ describe('OnboardingPage', () => {
                     <OnboardingPage />
                 </BrowserRouter>
             );
-            expect(screen.getByText('Simple Finance')).toBeInTheDocument();
+            expect(screen.getByText('Kannadi')).toBeInTheDocument();
             expect(screen.getByText('Setup Wizard')).toBeInTheDocument();
             expect(screen.getByText('Step 1 of 7')).toBeInTheDocument();
         });

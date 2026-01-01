@@ -495,9 +495,9 @@ const OnboardingPage: React.FC = () => {
                     <div className="onboarding-header-top">
                         <div className="onboarding-branding">
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                                <img src="/simple-finance/logo.webp" alt="Simple Finance" style={{ width: '32px', height: '32px' }} />
+                                <img src="/simple-finance/kannadilogo.webp" alt="Kannadi" style={{ width: '32px', height: '32px' }} />
                                 <div>
-                                    <h2>Simple Finance</h2>
+                                    <h2>Kannadi</h2>
                                     <p>Setup Wizard</p>
                                 </div>
                             </div>

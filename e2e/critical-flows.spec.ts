@@ -9,7 +9,7 @@ import { test, expect } from '@playwright/test';
 test.beforeEach(async ({ page, context }) => {
     // Clear all data to start fresh
     await context.clearCookies();
-    await page.goto('/simple-finance/');
+    await page.goto('/kannadi/');
     await page.evaluate(() => localStorage.clear());
 
     // Set localStorage to skip onboarding
@@ -45,7 +45,7 @@ test('should navigate to all main pages', async ({ page }) => {
     ];
 
     for (const route of routes) {
-        await page.goto(`/simple-finance/${route.hash}`);
+        await page.goto(`/kannadi/${route.hash}`);
         await page.waitForTimeout(300);
 
         // Verify page title contains expected text
@@ -58,7 +58,7 @@ test('should navigate to all main pages', async ({ page }) => {
  * Test 2: Add Income - Core data entry workflow
  */
 test('should add income successfully', async ({ page }) => {
-    await page.goto('/simple-finance/#/transactions');
+    await page.goto('/kannadi/#/transactions');
     await page.waitForTimeout(500);
 
     // Click Add Income button
@@ -83,7 +83,7 @@ test('should add income successfully', async ({ page }) => {
  * Test 3: Add Expense - Core expense entry workflow  
  */
 test('should add expense via ledger', async ({ page }) => {
-    await page.goto('/simple-finance/#/transactions');
+    await page.goto('/kannadi/#/transactions');
     await page.waitForTimeout(500);
 
     // Fill first row of expense ledger
@@ -104,7 +104,7 @@ test('should add expense via ledger', async ({ page }) => {
  * Test 4: Data Persistence - Verify localStorage works
  */
 test('should persist data across page reload', async ({ page }) => {
-    await page.goto('/simple-finance/#/transactions');
+    await page.goto('/kannadi/#/transactions');
     await page.waitForTimeout(500);
 
     // Add income
@@ -132,7 +132,7 @@ test('should persist data across page reload', async ({ page }) => {
  * Test 5: Dashboard Update - Verify data flows to dashboard
  */
 test('should show income on dashboard after adding', async ({ page }) => {
-    await page.goto('/simple-finance/#/transactions');
+    await page.goto('/kannadi/#/transactions');
     await page.waitForTimeout(500);
 
     // Add income
@@ -146,7 +146,7 @@ test('should show income on dashboard after adding', async ({ page }) => {
     await page.waitForTimeout(500);
 
     // Go to dashboard
-    await page.goto('/simple-finance/#/');
+    await page.goto('/kannadi/#/');
     await page.waitForTimeout(500);
 
     // Verify
@@ -157,12 +157,12 @@ test('should show income on dashboard after adding', async ({ page }) => {
  * Test 6: Brand Elements - Verify core UI elements
  */
 test('should display brand elements correctly', async ({ page }) => {
-    await page.goto('/simple-finance/#/');
+    await page.goto('/kannadi/#/');
     await page.waitForTimeout(300);
 
     // Verify brand elements
-    await expect(page.locator('.brand-title')).toHaveText('Simple Finance');
-    await expect(page.locator('.brand-subtitle')).toHaveText('Clear money reviews over time');
+    await expect(page.locator('.brand-title')).toHaveText('Kannadi');
+    await expect(page.locator('.brand-subtitle')).toHaveText('See your numbers');
 
     // Verify navigation exists
     await expect(page.locator('a[href="#/"]')).toBeVisible();

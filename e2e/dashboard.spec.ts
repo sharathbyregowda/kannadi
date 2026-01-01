@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('Simple Finance E2E', () => {
+test.describe('Kannadi E2E', () => {
     test.beforeEach(async ({ page }) => {
         await page.goto('/');
         // Clear local storage to start fresh (if needed, but app uses local storage)
@@ -9,9 +9,9 @@ test.describe('Simple Finance E2E', () => {
     });
 
     test('Dashboard loads and displays correctly', async ({ page }) => {
-        await expect(page).toHaveTitle(/Simple Finance/);
-        await expect(page.locator('.brand-title')).toHaveText('Simple Finance');
-        await expect(page.locator('.brand-subtitle')).toHaveText('Clear money reviews over time');
+        await expect(page).toHaveTitle(/Kannadi/);
+        await expect(page.locator('.brand-title')).toHaveText('Kannadi');
+        await expect(page.locator('.brand-subtitle')).toHaveText('See your numbers');
 
         // Month selector should exist in header
         await expect(page.locator('.main-header select')).toBeVisible();

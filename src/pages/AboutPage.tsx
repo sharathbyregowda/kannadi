@@ -144,7 +144,7 @@ const AboutPage: React.FC = () => {
         <div className="space-y-8" style={{ maxWidth: '100%', margin: '0 auto' }}>
             <header className="page-header">
                 <h2 className="page-title">About</h2>
-                <p className="page-subtitle">Learn about Simple Finance and how to use it</p>
+                <p className="page-subtitle">Learn about Kannadi and how to use it</p>
             </header>
 
             {/* Tab Navigation */}
