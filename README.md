@@ -2,10 +2,9 @@
 
 **See your numbers.**
 
-Kannadi helps you see your personal finance numbers clearly. Track income, expenses, savings, and cash flow over time in one place.
+![Kannadi - See your numbers](./public/kannadi-banner.webp)
 
-![Kannadi Dashboard](https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&q=80&w=2000)
-*(Replace with actual dashboard screenshot)*
+Kannadi helps you see your personal finance numbers clearly. Track income, expenses, savings, and cash flow over time in one place.
 
 ## ✨ Key Features
 
