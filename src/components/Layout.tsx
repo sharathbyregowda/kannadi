@@ -33,7 +33,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     <div className="sidebar-header">
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                             <img
-                                src="/kannadi/kannadilogo.webp"
+                                src="/kannadilogo.webp"
                                 alt="Kannadi"
                                 style={{ width: '36px', height: '36px', borderRadius: '8px' }}
                             />

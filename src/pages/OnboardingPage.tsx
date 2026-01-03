@@ -495,7 +495,7 @@ const OnboardingPage: React.FC = () => {
                     <div className="onboarding-header-top">
                         <div className="onboarding-branding">
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                                <img src="/kannadi/kannadilogo.webp" alt="Kannadi" style={{ width: '32px', height: '32px' }} />
+                                <img src="/kannadilogo.webp" alt="Kannadi" style={{ width: '32px', height: '32px' }} />
                                 <div>
                                     <h2>Kannadi</h2>
                                     <p>Setup Wizard</p>

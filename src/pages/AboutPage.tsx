@@ -11,7 +11,7 @@ const AboutPage: React.FC = () => {
             {/* Hero Banner */}
             <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
                 <img
-                    src="/kannadi/kannadi-banner.webp"
+                    src="/kannadi-banner.webp"
                     alt="Kannadi - See your numbers"
                     style={{ maxWidth: '150px', height: 'auto', borderRadius: '12px' }}
                 />
