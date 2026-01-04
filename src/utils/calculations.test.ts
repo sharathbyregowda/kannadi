@@ -5,10 +5,14 @@ import {
     calculateBudgetSummary,
     calculateSavingsRate,
     formatCurrency,
+    formatMonth,
     calculateMonthlyTrends,
+    calculateYearlyTrends,
+    calculateCategoryBreakdown,
+    getTopCategories,
     getCurrentMonth,
 } from './calculations';
-import { ExpenseCategory, type Expense, type Income } from '../types';
+import { ExpenseCategory, type Expense, type Income, type MonthlyData, type CustomCategory } from '../types';
 
 describe('calculations', () => {
     describe('calculate50_30_20', () => {
@@ -375,6 +379,182 @@ describe('calculations', () => {
             const expectedYear = now.getFullYear();
             const expectedMonth = String(now.getMonth() + 1).padStart(2, '0');
             expect(current).toBe(`${expectedYear}-${expectedMonth}`);
+        });
+    });
+
+    describe('formatMonth', () => {
+        it('should format monthly string to readable format', () => {
+            expect(formatMonth('2026-01')).toBe('January 2026');
+            expect(formatMonth('2026-12')).toBe('December 2026');
+        });
+
+        it('should format yearly summary strings', () => {
+            expect(formatMonth('2026-ALL')).toBe('Yearly Summary 2026');
+            expect(formatMonth('2025-ALL')).toBe('Yearly Summary 2025');
+        });
+
+        it('should handle single digit months', () => {
+            expect(formatMonth('2026-01')).toBe('January 2026');
+            expect(formatMonth('2026-09')).toBe('September 2026');
+        });
+
+        it('should handle edge months', () => {
+            expect(formatMonth('2026-01')).toBe('January 2026');
+            expect(formatMonth('2026-12')).toBe('December 2026');
+        });
+    });
+
+    describe('calculateYearlyTrends', () => {
+        it('should aggregate monthly data into yearly totals', () => {
+            const monthlyData: MonthlyData[] = [
+                { month: '2025-01', income: 5000, expenses: 3000, savings: 2000, needs: 2000, wants: 1000 },
+                { month: '2025-02', income: 5000, expenses: 3500, savings: 1500, needs: 2500, wants: 1000 },
+                { month: '2026-01', income: 6000, expenses: 4000, savings: 2000, needs: 3000, wants: 1000 },
+            ];
+
+            const result = calculateYearlyTrends(monthlyData);
+
+            expect(result).toHaveLength(2);
+
+            // 2025 totals
+            expect(result[0].year).toBe('2025');
+            expect(result[0].income).toBe(10000);
+            expect(result[0].expenses).toBe(6500);
+            expect(result[0].savings).toBe(3500);
+
+            // 2026 totals
+            expect(result[1].year).toBe('2026');
+            expect(result[1].income).toBe(6000);
+        });
+
+        it('should handle empty monthly data', () => {
+            const result = calculateYearlyTrends([]);
+            expect(result).toHaveLength(0);
+        });
+
+        it('should handle single month data', () => {
+            const monthlyData: MonthlyData[] = [
+                { month: '2025-06', income: 5000, expenses: 3000, savings: 2000, needs: 2000, wants: 1000 },
+            ];
+
+            const result = calculateYearlyTrends(monthlyData);
+            expect(result).toHaveLength(1);
+            expect(result[0].year).toBe('2025');
+            expect(result[0].income).toBe(5000);
+        });
+
+        it('should sort years chronologically', () => {
+            const monthlyData: MonthlyData[] = [
+                { month: '2026-01', income: 6000, expenses: 4000, savings: 2000, needs: 3000, wants: 1000 },
+                { month: '2024-01', income: 4000, expenses: 2000, savings: 2000, needs: 1500, wants: 500 },
+                { month: '2025-01', income: 5000, expenses: 3000, savings: 2000, needs: 2000, wants: 1000 },
+            ];
+
+            const result = calculateYearlyTrends(monthlyData);
+            expect(result[0].year).toBe('2024');
+            expect(result[1].year).toBe('2025');
+            expect(result[2].year).toBe('2026');
+        });
+    });
+
+    describe('calculateCategoryBreakdown', () => {
+        const categories: CustomCategory[] = [
+            { id: 'cat1', name: 'Groceries', icon: '🛒', type: 'needs' },
+            { id: 'cat2', name: 'Entertainment', icon: '🎬', type: 'wants' },
+            { id: 'cat3', name: 'Investments', icon: '📈', type: 'savings' },
+        ];
+
+        it('should calculate category breakdown for a month', () => {
+            const expenses: Expense[] = [
+                { id: '1', amount: 500, categoryId: 'cat1', month: '2026-01', categoryType: 'needs' } as Expense,
+                { id: '2', amount: 300, categoryId: 'cat2', month: '2026-01', categoryType: 'wants' } as Expense,
+                { id: '3', amount: 200, categoryId: 'cat3', month: '2026-01', categoryType: 'savings' } as Expense,
+            ];
+
+            const result = calculateCategoryBreakdown(expenses, categories, '2026-01');
+
+            expect(result).toHaveLength(3);
+            expect(result[0].categoryName).toBe('Groceries'); // Highest amount first
+            expect(result[0].amount).toBe(500);
+            expect(result[0].percentage).toBe(50); // 500/1000 * 100
+        });
+
+        it('should handle yearly breakdown', () => {
+            const expenses: Expense[] = [
+                { id: '1', amount: 500, categoryId: 'cat1', month: '2026-01', categoryType: 'needs' } as Expense,
+                { id: '2', amount: 500, categoryId: 'cat1', month: '2026-02', categoryType: 'needs' } as Expense,
+            ];
+
+            const result = calculateCategoryBreakdown(expenses, categories, '2026-ALL');
+
+            expect(result).toHaveLength(1);
+            expect(result[0].amount).toBe(1000);
+            expect(result[0].percentage).toBe(100);
+        });
+
+        it('should handle empty expenses', () => {
+            const result = calculateCategoryBreakdown([], categories, '2026-01');
+            expect(result).toHaveLength(0);
+        });
+
+        it('should filter by correct month', () => {
+            const expenses: Expense[] = [
+                { id: '1', amount: 500, categoryId: 'cat1', month: '2026-01', categoryType: 'needs' } as Expense,
+                { id: '2', amount: 300, categoryId: 'cat1', month: '2026-02', categoryType: 'needs' } as Expense,
+            ];
+
+            const result = calculateCategoryBreakdown(expenses, categories, '2026-01');
+
+            expect(result).toHaveLength(1);
+            expect(result[0].amount).toBe(500);
+        });
+
+        it('should sort by amount descending', () => {
+            const expenses: Expense[] = [
+                { id: '1', amount: 100, categoryId: 'cat1', month: '2026-01', categoryType: 'needs' } as Expense,
+                { id: '2', amount: 500, categoryId: 'cat2', month: '2026-01', categoryType: 'wants' } as Expense,
+                { id: '3', amount: 300, categoryId: 'cat3', month: '2026-01', categoryType: 'savings' } as Expense,
+            ];
+
+            const result = calculateCategoryBreakdown(expenses, categories, '2026-01');
+
+            expect(result[0].amount).toBe(500);
+            expect(result[1].amount).toBe(300);
+            expect(result[2].amount).toBe(100);
+        });
+    });
+
+    describe('getTopCategories', () => {
+        const mockCategoryData = [
+            { categoryId: '1', categoryName: 'A', amount: 500, percentage: 50 },
+            { categoryId: '2', categoryName: 'B', amount: 300, percentage: 30 },
+            { categoryId: '3', categoryName: 'C', amount: 100, percentage: 10 },
+            { categoryId: '4', categoryName: 'D', amount: 50, percentage: 5 },
+            { categoryId: '5', categoryName: 'E', amount: 30, percentage: 3 },
+            { categoryId: '6', categoryName: 'F', amount: 20, percentage: 2 },
+        ] as import('../types').CategoryExpenseData[];
+
+        it('should return top 5 categories by default', () => {
+            const result = getTopCategories(mockCategoryData);
+            expect(result).toHaveLength(5);
+            expect(result[0].categoryName).toBe('A');
+            expect(result[4].categoryName).toBe('E');
+        });
+
+        it('should respect custom limit', () => {
+            const result = getTopCategories(mockCategoryData, 3);
+            expect(result).toHaveLength(3);
+        });
+
+        it('should handle empty array', () => {
+            const result = getTopCategories([], 5);
+            expect(result).toHaveLength(0);
+        });
+
+        it('should handle array smaller than limit', () => {
+            const smallData = mockCategoryData.slice(0, 2);
+            const result = getTopCategories(smallData, 5);
+            expect(result).toHaveLength(2);
         });
     });
 });
