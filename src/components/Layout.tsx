@@ -110,11 +110,17 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                                 }}
                             >
                                 {(() => {
+                                    // Always include the current calendar month
+                                    const now = new Date();
+                                    const currentCalendarMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+
                                     const months = Array.from(
                                         new Set([
                                             ...data.expenses.map((e) => e.month),
                                             ...data.incomes.map((i) => i.month),
-                                            data.currentMonth,
+                                            currentCalendarMonth, // Always include current calendar month
+                                            // Include data.currentMonth only if it's a monthly value (not yearly)
+                                            ...(data.currentMonth && !data.currentMonth.endsWith('-ALL') ? [data.currentMonth] : []),
                                         ])
                                     ).filter((m) => !m.endsWith('-ALL'));
 
